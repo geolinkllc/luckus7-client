@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:luckus7/view/main_model.dart';
 import 'package:luckus7/view/make_order_model.dart';
 import 'package:luckus7/view/orders_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watcher/watcher.dart';
 
 import 'view/main_page.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(await SharedPreferences.getInstance(), permanent: true);
   Get.put(MakeOrderModel(), permanent: true);
   Get.put(OrdersModel(), permanent: true);
   Get.put(MainModel(), permanent: true);
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Luckus7',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,
           // brightness: Brightness.dark,

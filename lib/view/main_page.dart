@@ -3,60 +3,45 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luckus7/view/main_model.dart';
-import 'package:luckus7/view/orders_page.dart';
+import 'package:luckus7/view/auto_orders_page.dart';
+import 'package:luckus7/view/manual_orders_page.dart';
 import 'package:luckus7/view/tickets_page.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatelessWidget {
+  final pref = Get.find<SharedPreferences>();
   final model = Get.find<MainModel>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("luckus7"),
-      // ),
+      appBar: AppBar(
+        title: Obx(() => Text(model.incomingFolder.value)),
+        actions: [
+          IconButton(
+              onPressed: () => model.selectIncomingDir(context),
+              icon: Icon(Icons.open_in_browser_rounded))
+        ],
+      ),
       body: Row(
         children: [
-          Drawer(
-            elevation: 4,
-            child: ListView(padding: EdgeInsets.zero, children: [
-              DrawerHeader(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "luckus7",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      ElevatedButton(onPressed: () => model.selectIncomingDir(context), child: Text("스캔폴더선택"))
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlue,
-                  )),
-              ListTile(
-                  title: Text("주문목록"),
-                  onTap: () {
-                    model.pageIndex.value = 0;
-                  }),
-              ListTile(
-                title: Text("처리중인복권"),
-                onTap: () {
-                  model.pageIndex.value = 1;
-                },
-                trailing: Chip(
-                  label: Text("0"),
-                ),
-              ),
-            ]),
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: [AutoOrdersPage()],
+            ),
           ),
           Expanded(
-            child: Obx(() => IndexedStack(
-                  index: model.pageIndex.value,
-                  children: model.pages,
-                )),
+            flex: 1,
+            child: Column(
+              children: [ManualOrdersPage()],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(),
           ),
         ],
       ),

@@ -1,9 +1,12 @@
-
 typedef OrderNumber = List<String>;
 
-extension OrderNumberExt on OrderNumber{
+extension OrderNumberExt on OrderNumber {
   String get str => this.join("  ");
 }
+
+typedef GameType = String;
+const GameTypeMega = "mega";
+const GameTypePower = "power";
 
 typedef OrderState = String;
 const OrderStateOrdered = "ordered";
