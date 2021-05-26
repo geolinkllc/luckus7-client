@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/model/order.dart';
 import 'package:luckus7/extentions.dart';
-import 'package:luckus7/view/make_order_view.dart';
-import 'package:luckus7/view/orders_model.dart';
+import 'package:luckus7/model/order.dart';
+import 'package:luckus7/model/order_status.dart';
+import 'package:luckus7/service/order_service.dart';
 
 // ignore: must_be_immutable
 class ManualOrdersPage extends StatelessWidget {
-  GameType gameType;
+  OrderService service = Get.find();
 
-  ManualOrdersPage(this.gameType);
+  OrderName orderName;
 
-  OrdersModel model = Get.find();
+  ManualOrdersPage(this.orderName);
 
   @override
   Widget build(BuildContext context) => Column(
@@ -22,114 +22,61 @@ class ManualOrdersPage extends StatelessWidget {
             color: Colors.black12,
             alignment: Alignment.center,
             child: Text(
-              "자동",
+              "${orderName.name} 수동",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 24),
             ),
           ),
-          DataTable(columns: [
-            DataColumn(
-                label: Text(
-              "줄수",
-              textAlign: TextAlign.center,
-            )),
-            DataColumn(
-                label: Text(
-              "메가",
-              textAlign: TextAlign.center,
-            )),
-            DataColumn(
-                label: Text(
-              "파워볼",
-              textAlign: TextAlign.center,
-            )),
-          ], rows: [
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text(
-                "0 / 20 장",
-                textAlign: TextAlign.right,
-              )),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-          ])
+          Expanded(
+            child: StreamBuilder<OrderStatus?>(
+                stream: service.status,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return Placeholder(
+                      color: Colors.transparent,
+                    );
+                  }
+
+                  final orders = orderName == OrderNameMega
+                      ? snapshot.data!.mega.manualOrders
+                      : snapshot.data!.power.manualOrders;
+
+                  return ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) =>
+                          orderCard(context, orders[index]));
+                }),
+          )
         ],
       );
 
-  Widget ordersList(BuildContext context) => StreamBuilder<Iterable<Order>>(
-      stream: model.orders,
-      builder: (context, snapshot) => Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(16),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                mainAxisExtent: 100,
-                maxCrossAxisExtent: 200,
-                mainAxisSpacing: 0,
-                crossAxisSpacing: 0,
+  Widget orderCard(BuildContext context, ManualOrder order) => Card(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 24,
               ),
-              itemCount: snapshot.data?.length ?? 0,
-              itemBuilder: (context, index) =>
-                  orderCard(context, snapshot.data!.elementAt(index)),
-            ),
-          ));
-
-  Widget orderCard(BuildContext context, Order order) => Card(
-        child: Column(
-          children: [
-            Text(order.orderedAt.format('yyyy-MM-dd')),
-            Text("자동 ${order.autoCnt}"),
-            Text("수동 ${order.manualNumbers.length}"),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: order.manualNumbers.length,
-                itemBuilder: (context, index) =>
-                    Text(order.manualNumbers[index].str))
-          ],
+              Column(
+                  children: order.orderNumbers
+                      .map((e) => Text(
+                            e.numbers,
+                            style: TextStyle(fontSize: 18),
+                          ))
+                      .toList()),
+              Visibility(
+                visible: order.isIssued,
+                child: Icon(
+                  Icons.check,
+                  color: Theme.of(context).primaryColor,
+                  size: 24,
+                ),
+              )
+            ],
+          ),
         ),
       );
 }

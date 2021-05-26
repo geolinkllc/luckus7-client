@@ -14,10 +14,13 @@ dependencies:
   intl: ^0.17.0
   filesystem_picker: ^2.0.0-nullsafety.0
   cupertino_icons: ^1.0.3
-  path_provider: ^2.0.1
+  path_provider: ^2.0.2
   filepicker_windows: ^2.0.0
   watcher: ^1.0.0
-  shared_preferences: ^2.0.5
+  shared_preferences: ^2.0.6
+  dio: ^4.0.0
+  rxdart: ^0.27.0
+
 
 dev_dependencies:
   flutter_test:

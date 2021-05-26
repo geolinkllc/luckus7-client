@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/model/order.dart';
 import 'package:luckus7/extentions.dart';
-import 'package:luckus7/view/make_order_view.dart';
-import 'package:luckus7/view/orders_model.dart';
+import 'package:luckus7/model/order.dart';
+import 'package:luckus7/model/order_status.dart';
+import 'package:luckus7/service/order_service.dart';
 
 // ignore: must_be_immutable
 class AutoOrdersPage extends StatelessWidget {
-  OrdersModel model = Get.find();
+  OrderService service = Get.find();
 
   @override
   Widget build(BuildContext context) => Column(
@@ -23,109 +23,121 @@ class AutoOrdersPage extends StatelessWidget {
               style: TextStyle(fontSize: 24),
             ),
           ),
-          DataTable(columns: [
-            DataColumn(
-                label: Text(
-              "줄수",
-              textAlign: TextAlign.center,
-            )),
-            DataColumn(
-                label: Text(
-              "메가",
-              textAlign: TextAlign.center,
-            )),
-            DataColumn(
-                label: Text(
-              "파워볼",
-              textAlign: TextAlign.center,
-            )),
-          ], rows: [
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text(
-                "0 / 20 장",
-                textAlign: TextAlign.right,
-              )),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-              DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-            DataRow(cells: [
-              DataCell(Text("1 줄")),
-              DataCell(Text("0 / 20 장")),
-              DataCell(Text("10 / 30 장")),
-            ]),
-          ])
+          StreamBuilder<OrderStatus?>(
+              stream: service.status,
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return Placeholder(
+                    color: Colors.transparent,
+                  );
+                }
+
+                final status = snapshot.data!;
+
+                return Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(
+                            label: Text(
+                          "줄수",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 16),
+                        )),
+                        DataColumn(
+                            label: Text(
+                          "메가",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 16),
+                        )),
+                        DataColumn(
+                            label: Text(
+                          "파워볼",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 16),
+                        )),
+                      ],
+                      rows: [for (var i = 0; i < 10; i += 1) i].map((e) {
+                        final gameCnt = e + 1;
+                        final megaOrders = status.mega.autoOrders[e];
+                        final powerOrders = status.power.autoOrders[e];
+
+                        return DataRow(cells: [
+                          DataCell(Text(
+                            "$gameCnt 줄",
+                            style: TextStyle(fontSize: 16),
+                          )),
+                          DataCell(Text(
+                            "${megaOrders.issuedCnt} / ${megaOrders.totalCnt} 장",
+                            textAlign: TextAlign.right,
+                            style: TextStyle(fontSize: 16),
+                          )),
+                          DataCell(Text(
+                              "${powerOrders.issuedCnt} / ${powerOrders.totalCnt} 장",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(fontSize: 16))),
+                        ]);
+                      }).toList(),
+                      /*rows: [
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text(
+                          "0 / 20 장",
+                          textAlign: TextAlign.right,
+                        )),
+                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
+                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
+                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
+                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text("1 줄")),
+                        DataCell(Text("0 / 20 장")),
+                        DataCell(Text("10 / 30 장")),
+                      ]),
+                    ]*/
+                    ),
+                  ),
+                );
+              })
         ],
-      );
-
-  Widget ordersList(BuildContext context) => StreamBuilder<Iterable<Order>>(
-      stream: model.orders,
-      builder: (context, snapshot) => Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(16),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                mainAxisExtent: 100,
-                maxCrossAxisExtent: 200,
-                mainAxisSpacing: 0,
-                crossAxisSpacing: 0,
-              ),
-              itemCount: snapshot.data?.length ?? 0,
-              itemBuilder: (context, index) =>
-                  orderCard(context, snapshot.data!.elementAt(index)),
-            ),
-          ));
-
-  Widget orderCard(BuildContext context, Order order) => Card(
-        child: Column(
-          children: [
-            Text(order.orderedAt.format('yyyy-MM-dd')),
-            Text("자동 ${order.autoCnt}"),
-            Text("수동 ${order.manualNumbers.length}"),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: order.manualNumbers.length,
-                itemBuilder: (context, index) =>
-                    Text(order.manualNumbers[index].str))
-          ],
-        ),
       );
 }

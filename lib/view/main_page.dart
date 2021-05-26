@@ -1,14 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/view/main_model.dart';
+import 'package:luckus7/model/order.dart';
 import 'package:luckus7/view/auto_orders_page.dart';
-import 'package:luckus7/view/manual_orders_page.dart';
-import 'package:luckus7/view/tickets_page.dart';
-import 'package:filesystem_picker/filesystem_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:luckus7/view/image_processing_page.dart';
+import 'package:luckus7/view/main_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'manual_orders_page.dart';
 
 class MainPage extends StatelessWidget {
   final pref = Get.find<SharedPreferences>();
@@ -29,29 +27,31 @@ class MainPage extends StatelessWidget {
         children: [
           Expanded(
             flex: 1,
-            child: Column(
-              children: [AutoOrdersPage()],
-            ),
+            child: AutoOrdersPage(),
+          ),
+          SizedBox(
+            width: 12,
           ),
           Expanded(
             flex: 1,
-            child: Column(
-              children: [ManualOrdersPage()],
-            ),
+            child: ManualOrdersPage(OrderNameMega),
+          ),
+          SizedBox(
+            width: 12,
           ),
           Expanded(
             flex: 1,
-            child: Column(),
+            child: ManualOrdersPage(OrderNamePower),
+          ),
+          SizedBox(
+            width: 12,
+          ),
+          Expanded(
+            flex: 1,
+            child: ImageProcessingPage(),
           ),
         ],
       ),
-      floatingActionButton: Obx(() => model.pageIndex.value == 0
-          ? FloatingActionButton(
-              onPressed: () {},
-              tooltip: 'Increment',
-              child: Icon(Icons.add),
-            )
-          : Row()),
     );
   }
 }
