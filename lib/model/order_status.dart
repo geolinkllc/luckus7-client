@@ -17,21 +17,21 @@ class OrderStatus {
 }
 
 class GameOrderStatus {
-  List<AutoOrder> autoOrders = [];
+  List<AutoOrderCount> autoOrderCounts = [];
   List<ManualOrder> manualOrders = [];
 
-  GameOrderStatus(this.autoOrders, this.manualOrders);
+  GameOrderStatus(this.autoOrderCounts, this.manualOrders);
 
   GameOrderStatus.fromJson(dynamic json) {
-    autoOrders.addAll((json["autoOrders"] as List<dynamic>)
-        .map((e) => AutoOrder.fromJson(e)));
+    autoOrderCounts.addAll((json["autoOrderCounts"] as List<dynamic>)
+        .map((e) => AutoOrderCount.fromJson(e)));
     manualOrders.addAll((json["manualOrders"] as List<dynamic>)
         .map((e) => ManualOrder.fromJson(e)));
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map["autoOrders"] = autoOrders.map((v) => v.toJson()).toList();
+    map["autoOrderCounts"] = autoOrderCounts.map((v) => v.toJson()).toList();
     map["manualOrders"] = manualOrders.map((v) => v.toJson()).toList();
     return map;
   }
@@ -103,13 +103,13 @@ class OrderNumber {
   }
 }
 
-class AutoOrder {
+class AutoOrderCount {
   int totalCnt;
   int issuedCnt;
 
-  AutoOrder(this.totalCnt, this.issuedCnt);
+  AutoOrderCount(this.totalCnt, this.issuedCnt);
 
-  AutoOrder.fromJson(dynamic json)
+  AutoOrderCount.fromJson(dynamic json)
       : totalCnt = json["totalCnt"],
         issuedCnt = json["issuedCnt"];
 

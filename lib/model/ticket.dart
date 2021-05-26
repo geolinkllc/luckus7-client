@@ -1,29 +1,42 @@
 import 'order.dart';
 
+typedef TicketProcess = String;
+
+const TicketProcessProcessing = "processing";
+const TicketProcessMatched = "matched";
+const TicketProcessReadFailed = "readFailed";
+const TicketProcessMatchFailed = "matchFailed";
+const TicketProcessAssignError = "assignError";
+
 class Ticket {
-  String imagePath;
-  OrderName orderName;
+  String filePath;
+  OrderName? orderName;
   String? qrCode;
   String? barCode;
-  List<String> numbers = [];
+  TicketProcess process = TicketProcessProcessing;
+  List<String> numberRows = [];
 
-  Ticket(this.imagePath, this.orderName,
-      {this.qrCode, this.barCode, List<String> nums = const []}) {
-    numbers.addAll(nums);
+  Ticket(this.filePath,
+      {this.orderName,
+      this.qrCode,
+      this.barCode,
+      this.process = TicketProcessProcessing,
+      List<String> nums = const []}) {
+    numberRows.addAll(nums);
   }
 
   Ticket.fromJson(dynamic json)
-      : imagePath = json["imagePath"],
+      : filePath = json["filePath"],
         orderName = json["orderName"],
         qrCode = json["qrCode"],
-        barCode = json["barCode"] {
+        barCode = json["barCode"],
+        process = json["process"]
+  {
     var nums = json["barCode"];
-    if (nums == null) {
-      return;
+    if (nums != null) {
+      this
+          .numberRows
+          .addAll((nums as List<dynamic>).map((e) => e as String).toList());
     }
-
-    this
-        .numbers
-        .addAll((nums as List<dynamic>).map((e) => e as String).toList());
   }
 }

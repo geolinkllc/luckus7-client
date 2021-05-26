@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^2.0.6
   dio: ^4.0.0
   rxdart: ^0.27.0
+  desktop_window: ^0.4.0
 
 
 dev_dependencies:

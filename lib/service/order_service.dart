@@ -12,17 +12,14 @@ class OrderService extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getOrderStatus();
+    loadOrderStatus();
   }
 
-  FutureOr<OrderStatus> getOrderStatus({forceRefresh = false}) async {
-    if (status.hasValue && !forceRefresh) {
-      return status.value!;
-    }
+  loadOrderStatus({forceRefresh = false}) async {
+    if( forceRefresh )
+      status.value = null;
 
     final res = await Dio().get<dynamic>('http://34.134.22.192:8080/status');
     status.value = OrderStatus.fromJson(res.data);
-
-    return status.value!;
   }
 }

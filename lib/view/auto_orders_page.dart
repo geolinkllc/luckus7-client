@@ -60,8 +60,8 @@ class AutoOrdersPage extends StatelessWidget {
                       ],
                       rows: [for (var i = 0; i < 10; i += 1) i].map((e) {
                         final gameCnt = e + 1;
-                        final megaOrders = status.mega.autoOrders[e];
-                        final powerOrders = status.power.autoOrders[e];
+                        final megaOrders = status.mega.autoOrderCounts[e];
+                        final powerOrders = status.power.autoOrderCounts[e];
 
                         return DataRow(cells: [
                           DataCell(Text(
