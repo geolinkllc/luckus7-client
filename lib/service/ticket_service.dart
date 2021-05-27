@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
@@ -61,7 +62,8 @@ class TicketService extends GetxController {
   startWatcher(String path) {
     Directory dir;
     try{
-      dir = Directory.fromUri(Uri.parse(path));
+      // dir = Directory.fromUri(Uri.parse(path));
+      dir = Directory.fromRawPath(Uint8List.fromList(path.codeUnits));
     }catch(e){
       debugPrint(path);
       pref.setString("incomingFolder", "");
