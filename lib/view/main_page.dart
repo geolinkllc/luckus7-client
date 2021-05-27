@@ -3,38 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luckus7/model/order.dart';
 import 'package:luckus7/service/order_service.dart';
-import 'package:luckus7/service/scan_service.dart';
+import 'package:luckus7/service/ticket_service.dart';
 import 'package:luckus7/view/auto_orders_page.dart';
-import 'package:luckus7/view/image_processing_page.dart';
-import 'package:luckus7/view/main_model.dart';
+import 'package:luckus7/view/tickets_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'manual_orders_page.dart';
 
 class MainPage extends StatelessWidget {
   // final pref = Get.find<SharedPreferences>();
-  final model = Get.find<MainModel>();
   final orderService = Get.find<OrderService>();
-  final scanService = Get.find<ScanService>();
+  final scanService = Get.find<TicketService>();
 
   @override
   StatelessElement createElement() {
-    DesktopWindow.setWindowSize(Size(1920, 1080));
-    return super.createElement();
+    final elem = super.createElement();
+    DesktopWindow.setWindowSize(Size(1920, 1000));
+    return elem;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
-        title: StreamBuilder<String>(
-          stream: scanService.incomingFolder,
-          builder: (context, snapshot) {
-            return Text(snapshot.data??"");
-          }
+        leading: IconButton(
+          icon: Icon(Icons.refresh_rounded),
+          onPressed: () => orderService.loadOrderStatus(forceRefresh: true),
         ),
+        elevation: 1,
+      centerTitle: true,
+      title: Text("LUCS", style: TextStyle(fontSize: 24), ),
         actions: [
+          StreamBuilder<String>(
+              stream: scanService.incomingFolder,
+              builder: (context, snapshot) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(snapshot.data ?? "", style: TextStyle(fontSize: 20),),
+                  ],
+                );
+              }),
+          SizedBox(width: 8,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: OutlinedButton(
@@ -44,15 +54,6 @@ class MainPage extends StatelessWidget {
                   style: TextStyle(color: Colors.black54),
                 )),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            child: OutlinedButton(
-                onPressed: () => orderService.loadOrderStatus(forceRefresh: true),
-                child: Text(
-                  "새로고침",
-                  style: TextStyle(color: Colors.black54),
-                )),
-          )
         ],
       ),
       body: Row(
@@ -66,7 +67,7 @@ class MainPage extends StatelessWidget {
             width: 12,
           ),
           SizedBox(
-            width: 230,
+            width: 250,
             height: double.infinity,
             child: ManualOrdersPage(OrderNameMega),
           ),
@@ -74,7 +75,7 @@ class MainPage extends StatelessWidget {
             width: 12,
           ),
           SizedBox(
-            width: 230,
+            width: 250,
             height: double.infinity,
             child: ManualOrdersPage(OrderNamePower),
           ),
@@ -83,7 +84,7 @@ class MainPage extends StatelessWidget {
           ),
           Expanded(
             flex: 3,
-            child: ImageProcessingPage(),
+            child: TicketsPage(),
           ),
         ],
       ),

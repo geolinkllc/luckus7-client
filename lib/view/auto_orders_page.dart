@@ -68,15 +68,21 @@ class AutoOrdersPage extends StatelessWidget {
                             "$gameCnt 줄",
                             style: TextStyle(fontSize: 16),
                           )),
-                          DataCell(Text(
-                            "${megaOrders.issuedCnt} / ${megaOrders.totalCnt} 장",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(fontSize: 16),
-                          )),
-                          DataCell(Text(
-                              "${powerOrders.issuedCnt} / ${powerOrders.totalCnt} 장",
+                          DataCell(Container(
+                            color: megaOrders.issuedCnt == megaOrders.totalCnt && megaOrders.totalCnt > 0 ? Colors.lightBlue[100] : null,
+                            child: Text(
+                              "${megaOrders.issuedCnt} / ${megaOrders.totalCnt} 장",
                               textAlign: TextAlign.right,
-                              style: TextStyle(fontSize: 16))),
+                              style: TextStyle(fontSize: 16, color: megaOrders.totalCnt == 0 ? Colors.grey : null),
+                            ),
+                          )),
+                          DataCell(Container(
+                            color: powerOrders.issuedCnt == powerOrders.totalCnt && powerOrders.totalCnt > 0 ? Colors.lightBlue[100] : null,
+                            child: Text(
+                                "${powerOrders.issuedCnt} / ${powerOrders.totalCnt} 장",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 16, color: powerOrders.totalCnt == 0 ? Colors.grey : null)),
+                          )),
                         ]);
                       }).toList(),
                       /*rows: [

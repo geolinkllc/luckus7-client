@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/service/scan_service.dart';
-import 'package:luckus7/view/main_model.dart';
+import 'package:luckus7/service/ticket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watcher/watcher.dart';
 
 import 'service/order_service.dart';
 import 'view/main_page.dart';
@@ -11,9 +9,8 @@ import 'view/main_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(await SharedPreferences.getInstance(), permanent: true);
-  Get.put(ScanService(), permanent: true);
+  Get.put(TicketService(), permanent: true);
   Get.put(OrderService(), permanent: true);
-  Get.put(MainModel(), permanent: true);
   runApp(MyApp());
 }
 

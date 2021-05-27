@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luckus7/extentions.dart';
@@ -51,30 +53,32 @@ class ManualOrdersPage extends StatelessWidget {
       );
 
   Widget orderCard(BuildContext context, ManualOrder order) => Card(
+    elevation: 0.5,
+    color: order.isIssued ? Colors.lightBlue[100] : null,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(
+                color: Colors.black38 ,
+                width: 0.5)),
+        borderOnForeground: true,
         margin: EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 24,
-              ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                   children: order.orderNumbers
                       .map((e) => Text(
                             e.numbers,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(
+                              fontSize: 18,
+                              wordSpacing: 5,
+                              fontFeatures: [FontFeature.tabularFigures()],
+                            ),
                           ))
                       .toList()),
-              Visibility(
-                visible: order.isIssued,
-                child: Icon(
-                  Icons.check,
-                  color: Theme.of(context).primaryColor,
-                  size: 24,
-                ),
-              )
             ],
           ),
         ),

@@ -19,7 +19,7 @@ class OrderService extends GetxController {
     if( forceRefresh )
       status.value = null;
 
-    final res = await Dio().get<dynamic>('http://34.134.22.192:8080/status');
+    final res = await Dio().get<dynamic>('http://34.134.22.192:8080/orders/status');
     status.value = OrderStatus.fromJson(res.data);
   }
 }
