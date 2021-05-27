@@ -66,7 +66,7 @@ class TicketService extends GetxController {
       debugPrint(path);
       pref.setString("incomingFolder", "");
       incomingFolder.value = "";
-      return
+      return;
     }
 
     dir.listSync().forEach((element) {
