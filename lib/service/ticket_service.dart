@@ -59,7 +59,16 @@ class TicketService extends GetxController {
   }
 
   startWatcher(String path) {
-    final dir = Directory.fromUri(Uri.parse(path));
+    Directory dir;
+    try{
+      dir = Directory.fromUri(Uri.parse(path));
+    }catch(e){
+      debugPrint(path);
+      pref.setString("incomingFolder", "");
+      incomingFolder.value = "";
+      return
+    }
+
     dir.listSync().forEach((element) {
       onFileAdded(element.path);
     });
