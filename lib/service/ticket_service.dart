@@ -65,7 +65,7 @@ class TicketService extends GetxController {
       // dir = Directory.fromUri(Uri.parse(path));
       dir = Directory.fromRawPath(Uint8List.fromList(path.codeUnits));
     }catch(e){
-      debugPrint(path);
+      debugPrint("startWatcher failed: " + path);
       pref.setString("incomingFolder", "");
       incomingFolder.value = "";
       return;
