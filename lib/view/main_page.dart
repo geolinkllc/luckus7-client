@@ -13,7 +13,7 @@ import 'manual_orders_page.dart';
 class MainPage extends StatelessWidget {
   // final pref = Get.find<SharedPreferences>();
   final orderService = Get.find<OrderService>();
-  final scanService = Get.find<TicketService>();
+  final ticketService = Get.find<TicketService>();
 
   @override
   StatelessElement createElement() {
@@ -35,7 +35,7 @@ class MainPage extends StatelessWidget {
       title: Text("LUCS", style: TextStyle(fontSize: 24), ),
         actions: [
           StreamBuilder<String>(
-              stream: scanService.incomingFolder,
+              stream: ticketService.incomingFolder,
               builder: (context, snapshot) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -48,9 +48,18 @@ class MainPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: OutlinedButton(
-                onPressed: () => scanService.selectIncomingDir(context),
+                onPressed: () => ticketService.selectIncomingDir(context),
                 child: Text(
                   "스캔폴더변경",
+                  style: TextStyle(color: Colors.black54),
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: OutlinedButton(
+                onPressed: () => orderService.printManualOMR(),
+                child: Text(
+                  "수동주문인쇄",
                   style: TextStyle(color: Colors.black54),
                 )),
           ),

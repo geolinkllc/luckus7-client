@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_window
+  printing
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

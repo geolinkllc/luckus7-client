@@ -148,4 +148,6 @@ class TicketService extends GetxController {
 
     File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits)).deleteSync();
   }
+  
+
 }
