@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luckus7/model/order.dart';
 import 'package:luckus7/service/order_service.dart';
+import 'package:luckus7/service/ticket_print_service.dart';
 import 'package:luckus7/service/ticket_service.dart';
 import 'package:luckus7/view/auto_orders_page.dart';
 import 'package:luckus7/view/tickets_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'manual_orders_page.dart';
 
@@ -14,6 +14,7 @@ class MainPage extends StatelessWidget {
   // final pref = Get.find<SharedPreferences>();
   final orderService = Get.find<OrderService>();
   final ticketService = Get.find<TicketService>();
+  final printService = Get.find<TicketPrintService>();
 
   @override
   StatelessElement createElement() {
@@ -57,9 +58,9 @@ class MainPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: OutlinedButton(
-                onPressed: () => orderService.printManualOMR(),
+                onPressed: () => printService.printTickets(),
                 child: Text(
-                  "수동주문인쇄",
+                  "신청용지인쇄",
                   style: TextStyle(color: Colors.black54),
                 )),
           ),

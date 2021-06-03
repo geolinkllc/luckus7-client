@@ -7,12 +7,16 @@
 // const OrderSelectionTypeManual = "manual";
 
 typedef OrderState = String;
-const OrderStateOrdered = "ordered";
-const OrderStatePurchased = "purchased";
+const OrderState OrderStateOrdered = "ordered";
+const OrderState OrderStatePurchased = "purchased";
 
 typedef OrderName = String;
-const OrderNameMega = "mega";
-const OrderNamePower = "power";
+const OrderName OrderNameMega = "mega";
+const OrderName OrderNamePower = "power";
+
+typedef OrderType = int;
+const OrderType OrderTypeManual = 1;
+const OrderType OrderTypeAuto = 2;
 
 extension OrderNameExtention on OrderName {
   String get name {

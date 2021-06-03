@@ -23,11 +23,16 @@ class ManualOrdersPage extends StatelessWidget {
             width: double.infinity,
             color: Colors.black12,
             alignment: Alignment.center,
-            child: Text(
-              "${orderName.name} 수동",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24),
-            ),
+            child: StreamBuilder<OrderStatus?>(
+                stream: service.status,
+                builder: (context, snapshot) {
+                  final gameStatus = snapshot.data?.getGameStatus(orderName);
+                  return Text(
+                    "${orderName.name} 수동 ${gameStatus?.manualOrdersIssuedCnt ?? 0} / ${gameStatus?.manualOrderCnt ?? 0}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24),
+                  );
+                }),
           ),
           Expanded(
             child: StreamBuilder<OrderStatus?>(
@@ -52,14 +57,12 @@ class ManualOrdersPage extends StatelessWidget {
         ],
       );
 
-  Widget orderCard(BuildContext context, ManualOrder order) => Card(
-    elevation: 0.5,
-    color: order.isIssued ? Colors.lightBlue[100] : null,
+  Widget orderCard(BuildContext context, Order order) => Card(
+        elevation: 0.5,
+        color: order.isIssued ? Colors.lightBlue[100] : null,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-                color: Colors.black38 ,
-                width: 0.5)),
+            side: BorderSide(color: Colors.black38, width: 0.5)),
         borderOnForeground: true,
         margin: EdgeInsets.symmetric(vertical: 8),
         child: Padding(
@@ -68,7 +71,7 @@ class ManualOrdersPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: order.orderNumbers
                       .map((e) => Text(
                             e.numbers,

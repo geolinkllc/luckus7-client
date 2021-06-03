@@ -1,3 +1,5 @@
+import 'order.dart';
+
 class OrderStatus {
   GameOrderStatus mega;
   GameOrderStatus power;
@@ -14,11 +16,22 @@ class OrderStatus {
     map["power"] = power.toJson();
     return map;
   }
+
+  GameOrderStatus getGameStatus(OrderName orderName) {
+    switch (orderName) {
+      case OrderNameMega:
+        return mega;
+      case OrderNamePower:
+        return power;
+      default:
+        return mega;
+    }
+  }
 }
 
 class GameOrderStatus {
   List<AutoOrderCount> autoOrderCounts = [];
-  List<ManualOrder> manualOrders = [];
+  List<Order> manualOrders = [];
 
   GameOrderStatus(this.autoOrderCounts, this.manualOrders);
 
@@ -26,7 +39,7 @@ class GameOrderStatus {
     autoOrderCounts.addAll((json["autoOrderCounts"] as List<dynamic>)
         .map((e) => AutoOrderCount.fromJson(e)));
     manualOrders.addAll((json["manualOrders"] as List<dynamic>)
-        .map((e) => ManualOrder.fromJson(e)));
+        .map((e) => Order.fromJson(e)));
   }
 
   Map<String, dynamic> toJson() {
@@ -35,25 +48,30 @@ class GameOrderStatus {
     map["manualOrders"] = manualOrders.map((v) => v.toJson()).toList();
     return map;
   }
+
+  int get manualOrdersIssuedCnt =>
+      manualOrders.where((element) => element.isIssued).length;
+
+  int get manualOrderCnt => manualOrders.length;
 }
 
-class ManualOrder {
+class Order {
   int time;
   String orderName;
   int orderType;
   String userName;
-  List<OrderNumber> orderNumbers = [];
+  List<Play> orderNumbers = [];
 
-  ManualOrder(this.time, this.orderName, this.orderType, this.userName,
+  Order(this.time, this.orderName, this.orderType, this.userName,
       this.orderNumbers);
 
-  ManualOrder.fromJson(dynamic json)
+  Order.fromJson(dynamic json)
       : time = json["time"],
         orderName = json["orderName"],
         orderType = json["orderType"],
         userName = json["userName"] {
-    orderNumbers.addAll((json["orderNumbers"] as List<dynamic>)
-        .map((e) => OrderNumber.fromJson(e)));
+    orderNumbers.addAll(
+        (json["orderNumbers"] as List<dynamic>).map((e) => Play.fromJson(e)));
   }
 
   Map<String, dynamic> toJson() {
@@ -70,20 +88,25 @@ class ManualOrder {
   bool get isIssued =>
       orderNumbers.where((element) => element.flag == 1).length ==
       orderNumbers.length;
+
+  int get issuedCnt =>
+      orderNumbers.where((element) => element.flag == 1).length;
+
+  int get totalCnt => orderNumbers.length;
 }
 
-class OrderNumber {
-  String orderName;
-  int orderType;
+class Play {
+  OrderName orderName;
+  OrderType orderType;
   String numbers;
   int flag;
   String buyType;
   int time;
 
-  OrderNumber(this.orderName, this.orderType, this.numbers, this.flag,
-      this.buyType, this.time);
+  Play(this.orderName, this.orderType, this.numbers, this.flag, this.buyType,
+      this.time);
 
-  OrderNumber.fromJson(dynamic json)
+  Play.fromJson(dynamic json)
       : orderName = json["orderName"],
         orderType = json["orderType"],
         numbers = json["numbers"],
@@ -100,6 +123,30 @@ class OrderNumber {
     map["buyType"] = buyType;
     map["time"] = time;
     return map;
+  }
+
+  List<int> get whiteBalls {
+    if (orderType == OrderTypeAuto) {
+      if (orderName == OrderNameMega) {
+        return [77];
+      } else {
+        return [77];
+      }
+    } else {
+      return numbers.split(" ").map((e) => int.parse(e)).toList().sublist(0, 5);
+    }
+  }
+
+  int get specialBall {
+    if (orderType == OrderTypeAuto) {
+      if (orderName == OrderNameMega) {
+        return 28;
+      } else {
+        return 28;
+      }
+    } else {
+      return numbers.split(" ").map((e) => int.parse(e)).last;
+    }
   }
 }
 
