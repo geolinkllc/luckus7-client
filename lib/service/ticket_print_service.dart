@@ -30,7 +30,9 @@ class TicketPrintService extends GetxController {
   }
 
   List<pw.Page> renderGamePages(GameOrderStatus status) {
-    final orders = status.manualOrders;
+    final orders = <Order>[];
+    orders.addAll(status.manualOrders);
+    orders.addAll(status.autoOrders);
     final pageOrders = <Order>[];
     final pages = <pw.Page>[];
 
