@@ -5,8 +5,8 @@ import 'package:luckus7/model/order.dart';
 import 'package:luckus7/service/order_service.dart';
 import 'package:luckus7/service/ticket_print_service.dart';
 import 'package:luckus7/service/ticket_service.dart';
-import 'package:luckus7/view/auto_orders_page.dart';
-import 'package:luckus7/view/tickets_page.dart';
+import 'package:luckus7/manager_view/auto_orders_page.dart';
+import 'package:luckus7/manager_view/tickets_page.dart';
 
 import 'manual_orders_page.dart';
 
