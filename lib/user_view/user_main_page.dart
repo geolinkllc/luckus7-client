@@ -42,17 +42,19 @@ class UserMainPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               StreamBuilder<int>(
-                  stream: webViewController.progress,
-                  builder: (context, snapshot) => AnimatedOpacity(
-                    opacity: snapshot.data == 100 || snapshot.data == 0 ? 0 : 1,
-                    duration: Duration(milliseconds: 200),
-                    child: FAProgressBar(
-                      size: MediaQuery.of(context).padding.top,
-                      progressColor: Colors.blueAccent,
-                        borderRadius: BorderRadius.zero,
-                        currentValue: snapshot.data ?? 0,
-                      ),
-                  ),),
+                stream: webViewController.progress,
+                builder: (context, snapshot) => AnimatedOpacity(
+                  opacity: snapshot.data == 100 || snapshot.data == 0 ? 0 : 1,
+                  duration: Duration(milliseconds: 200),
+                  child: FAProgressBar(
+                    size: MediaQuery.of(context).padding.top,
+                    backgroundColor: Colors.white,
+                    progressColor: Colors.blueAccent,
+                    borderRadius: BorderRadius.zero,
+                    currentValue: snapshot.data ?? 0,
+                  ),
+                ),
+              ),
               Expanded(
                 child: webViewController.newWebView(context,
                     initialUrlRequest:

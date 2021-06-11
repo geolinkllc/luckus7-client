@@ -77,7 +77,6 @@ class MessagingService extends GetxController {
     final currentToken = await FirebaseMessaging.instance.getToken();
 
     if (currentToken != null) {
-      debugPrint("initToken:$currentToken");
       token.add(currentToken);
     }
   }

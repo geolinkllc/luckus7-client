@@ -34,6 +34,9 @@ dependencies:
   flutter_local_notifications: ^6.0.0
   percent_indicator: ^3.0.1
   flutter_animation_progress_bar: ^2.0.0
+  webview_cookie_manager: ^2.0.0
+  fk_user_agent: ^2.0.1
+
 
 dev_dependencies:
   flutter_test:

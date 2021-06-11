@@ -3,6 +3,7 @@ import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
 import 'package:com.luckus7.lucs/view/webview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,11 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'user_view/user_main_page.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+  await FkUserAgent.init();
 
   final messagingService = MessagingService();
   messagingService.initToken();
@@ -28,12 +29,11 @@ Future<void> main() async {
   Get.put(WebViewController(), permanent: true);
   Get.put(UserMainModel(), permanent: true);
 
-
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent, // Color for Android
-      statusBarBrightness: Brightness.light // Dark == white status bar -- for IOS.
-  ));
-
+      statusBarBrightness:
+          Brightness.light // Dark == white status bar -- for IOS.
+      ));
 
   runApp(MyApp());
 }

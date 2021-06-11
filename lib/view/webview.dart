@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -7,11 +10,13 @@ import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class WebViewController extends GetxController {
   PackageInfo packageInfo = Get.find();
   MessagingService messagingService = Get.find();
   final cookieManager = CookieManager.instance();
+  final wcookieManager = WebviewCookieManager();
 
   late InAppWebViewGroupOptions _initialOptions;
   final controllers = <InAppWebViewController>[];
@@ -26,17 +31,20 @@ class WebViewController extends GetxController {
   WebViewController() {
     _initialOptions = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
-        applicationNameForUserAgent:
-            "Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
+        // applicationNameForUserAgent:
+        //     "${FkUserAgent.userAgent!} Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
         supportZoom: false,
         incognito: false,
         javaScriptCanOpenWindowsAutomatically: true,
+        // useShouldOverrideUrlLoading: true,
+        userAgent:
+            "${FkUserAgent.userAgent!} Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
       ),
       ios: IOSInAppWebViewOptions(
         allowsAirPlayForMediaPlayback: false,
         allowsBackForwardNavigationGestures: false,
         allowsInlineMediaPlayback: true,
-        sharedCookiesEnabled: true,
+        sharedCookiesEnabled: false,
       ),
       android: AndroidInAppWebViewOptions(
         builtInZoomControls: false,
@@ -51,7 +59,7 @@ class WebViewController extends GetxController {
   }
 
   onProgressChanged(InAppWebViewController controller, int progress) {
-    debugPrint(progress.toString());
+    // debugPrint(progress.toString());
     this.progress.add(progress);
     if (progress == 100) {
       Future.delayed(Duration(milliseconds: 200)).then((value) {
@@ -72,10 +80,18 @@ class WebViewController extends GetxController {
       InAppWebViewController controller, Uri? url, int code, String message) {}
 
   onLoadStop(InAppWebViewController controller, Uri? url) async {
-    // if( url != null) {
-    //   final cookies = await cookieManager.getCookies(url: url);
-    //   cookies[0].
-    // }
+    //   if (url != null) {
+    //     debugPrint(url.toString());
+    //     final cookies = await cookieManager.getCookies(url: url);
+    //     debugPrint(cookies.length.toString());
+    //     debugPrint(jsonEncode(cookies));
+    //
+    //     final gotCookies = await wcookieManager.getCookies(url.toString());
+    //     print(gotCookies.length.toString());
+    //     for (var item in gotCookies) {
+    //       print(item);
+    //     }
+    //   }
   }
 
   Widget newWebView(BuildContext context,
@@ -126,7 +142,17 @@ class WebViewController extends GetxController {
           controllers.remove(controller);
         },
         onLoadStart: (controller, url) {
-          // print("onLoadStart");
+          print("onLoadStart");
+        },
+        shouldInterceptFetchRequest: (controller, fetchRequest) {
+          print("shouldInterceptFetchRequest");
+          print(jsonEncode(fetchRequest.headers));
+          return Future.value(fetchRequest);
+        },
+        shouldOverrideUrlLoading: (controller, navigationAction) {
+          print("shouldOverrideUrlLoading");
+          print(jsonEncode(navigationAction.request.headers));
+          return Future.value(NavigationActionPolicy.ALLOW);
         },
       ),
     );
