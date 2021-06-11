@@ -8,7 +8,7 @@
 PRODUCT_NAME = luckus7
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.luckus7.luckus7
+PRODUCT_BUNDLE_IDENTIFIER = com.luckus7.lucs
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2021 com.luckus7. All rights reserved.

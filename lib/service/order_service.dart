@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:com.luckus7.lucs/model/order_status.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/model/order_status.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;

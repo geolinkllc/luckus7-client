@@ -1,11 +1,10 @@
 import 'dart:ui';
 
+import 'package:com.luckus7.lucs/model/order_status.dart';
+import 'package:com.luckus7.lucs/model/order.dart';
+import 'package:com.luckus7.lucs/service/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/extentions.dart';
-import 'package:luckus7/model/order.dart';
-import 'package:luckus7/model/order_status.dart';
-import 'package:luckus7/service/order_service.dart';
 
 // ignore: must_be_immutable
 class ManualOrdersPage extends StatelessWidget {

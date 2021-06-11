@@ -1,4 +1,4 @@
-name: luckus7
+name: com.luckus7.lucs
 description: luckus7
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -28,7 +28,12 @@ dependencies:
   android_intent: ^2.0.2
   colorful_safe_area: ^0.3.0
   modal_bottom_sheet: ^2.0.0
-
+  package_info: ^2.0.2
+  firebase_core: "^1.2.1"
+  firebase_messaging: "^10.0.1"
+  flutter_local_notifications: ^6.0.0
+  percent_indicator: ^3.0.1
+  flutter_animation_progress_bar: ^2.0.0
 
 dev_dependencies:
   flutter_test:

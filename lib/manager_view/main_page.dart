@@ -1,12 +1,12 @@
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/model/order.dart';
-import 'package:luckus7/service/order_service.dart';
-import 'package:luckus7/service/ticket_print_service.dart';
-import 'package:luckus7/service/ticket_service.dart';
-import 'package:luckus7/manager_view/auto_orders_page.dart';
-import 'package:luckus7/manager_view/tickets_page.dart';
+import 'package:com.luckus7.lucs/model/order.dart';
+import 'package:com.luckus7.lucs/service/order_service.dart';
+import 'package:com.luckus7.lucs/service/ticket_print_service.dart';
+import 'package:com.luckus7.lucs/service/ticket_service.dart';
+import 'package:com.luckus7.lucs/manager_view/auto_orders_page.dart';
+import 'package:com.luckus7.lucs/manager_view/tickets_page.dart';
 
 import 'manual_orders_page.dart';
 

@@ -1,7 +1,7 @@
+import 'package:com.luckus7.lucs/service/ticket_print_service.dart';
+import 'package:com.luckus7.lucs/service/ticket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/service/ticket_print_service.dart';
-import 'package:luckus7/service/ticket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'service/order_service.dart';

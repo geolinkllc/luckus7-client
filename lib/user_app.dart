@@ -1,21 +1,39 @@
+import 'package:com.luckus7.lucs/service/messaging_service.dart';
+import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
+import 'package:com.luckus7.lucs/view/webview.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:luckus7/service/ticket_print_service.dart';
-import 'package:luckus7/service/ticket_service.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'service/order_service.dart';
-import 'user_view/main_page.dart';
+import 'user_view/user_main_page.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(await SharedPreferences.getInstance(), permanent: true);
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.black, // Color for Android
+  await Firebase.initializeApp();
+
+  final messagingService = MessagingService();
+  messagingService.initToken();
+
+  Get.put(await PackageInfo.fromPlatform(), permanent: true);
+  Get.put(await SharedPreferences.getInstance(), permanent: true);
+  Get.put(messagingService, permanent: true);
+  Get.put(WebViewController(), permanent: true);
+  Get.put(UserMainModel(), permanent: true);
+
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor: Colors.transparent, // Color for Android
       statusBarBrightness: Brightness.light // Dark == white status bar -- for IOS.
   ));
+
 
   runApp(MyApp());
 }
@@ -24,7 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Luckus7',
+      title: 'LUCS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           outlinedButtonTheme: OutlinedButtonThemeData(
@@ -39,7 +57,7 @@ class MyApp extends StatelessWidget {
             // enabledBorder: OutlineInputBorder(
             //     borderSide: BorderSide(color:Theme.of(context).dividerColor)),
           )),
-      home: MainPage(),
+      home: UserMainPage(),
     );
   }
 }

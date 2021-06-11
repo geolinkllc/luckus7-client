@@ -2,18 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:com.luckus7.lucs/model/ticket.dart';
+import 'package:com.luckus7.lucs/model/order.dart';
 import 'package:dio/dio.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile, FormData;
-import 'package:luckus7/model/order_status.dart';
-import 'package:luckus7/model/ticket.dart';
-import 'package:luckus7/model/order.dart';
-import 'package:luckus7/service/order_service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watcher/watcher.dart';
+
+import 'order_service.dart';
 
 class TicketService extends GetxController {
   DirectoryWatcher? watcher;
