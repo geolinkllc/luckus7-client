@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:com.luckus7.lucs/model/order_status.dart';
+import 'package:com.luckus7.lucs/network/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,7 @@ class OrderService extends GetxController {
     if (forceRefresh) status.value = null;
 
     final res =
-        await Dio().get<dynamic>('http://52.79.208.66:8080/orders/status');
+        await apicli.get<dynamic>('/orders/status');
     status.value = OrderStatus.fromJson(res.data);
   }
 }

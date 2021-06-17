@@ -12,3 +12,13 @@ extension ContextExtention on BuildContext {
     return Theme.of(this);
   }
 }
+
+const cmpt = 28.5;
+
+extension DoubleExtention on double {
+  double get cm => this * cmpt;
+}
+
+extension IntExtention on int {
+  double get cm => this * cmpt;
+}

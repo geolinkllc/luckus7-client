@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:com.luckus7.lucs/view/webview.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -90,9 +91,11 @@ class MessagingService extends GetxController {
 
   onMessageSelected(String messageId) {
     final message = messages[messageId];
-    if (message != null) {
+    if (message != null && message.data["in-link"] != null) {
+      Get.find<WebViewController>().windowOpen(message.data["in-link"]!);
       // Get.snackbar("onMessageSelected", message.notification!.title! + " " + message.notification!.body!, backgroundColor: Colors.white);
-      messageStream.add(message);
+      // messageStream.add(message);
+
     }
   }
 
@@ -149,6 +152,7 @@ class MessagingService extends GetxController {
                 channel.id,
                 channel.name,
                 channel.description,
+                styleInformation: BigTextStyleInformation(notification.body!, contentTitle: notification.title),
                 icon: "ic_notification",
 
                 // other properties...

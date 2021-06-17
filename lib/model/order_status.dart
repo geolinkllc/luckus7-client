@@ -39,10 +39,10 @@ class GameOrderStatus {
   GameOrderStatus.fromJson(dynamic json) {
     autoOrderCounts.addAll((json["autoOrderCounts"] as List<dynamic>)
         .map((e) => AutoOrderCount.fromJson(e)));
-    manualOrders.addAll((json["manualOrders"] as List<dynamic>)
-        .map((e) => Order.fromJson(e)));
-    autoOrders.addAll((json["autoOrders"] as List<dynamic>)
-        .map((e) => Order.fromJson(e)));
+    manualOrders.addAll(
+        (json["manualOrders"] as List<dynamic>).map((e) => Order.fromJson(e)));
+    autoOrders.addAll(
+        (json["autoOrders"] as List<dynamic>).map((e) => Order.fromJson(e)));
   }
 
   Map<String, dynamic> toJson() {
@@ -129,27 +129,57 @@ class Play {
     return map;
   }
 
-  List<int> get whiteBalls {
-    if (orderType == OrderTypeAuto) {
-      if (orderName == OrderNameMega) {
-        return [77];
-      } else {
-        return [77];
-      }
+  List<int> whiteIndexesToMark(int playIndex, rowIndex) {
+    if (orderName == OrderNamePower) {
+      int offset = 1 + playIndex * 10;
+      int from = rowIndex * 10 + 1;
+      int to = from + 10;
+      return whiteBalls
+          .where((n) => n >= from && n < to)
+          .map((e) => offset + e % 10)
+          .toList();
     } else {
-      return numbers.split(" ").map((e) => int.parse(e)).toList().sublist(0, 5);
+      return [];
+    }
+  }
+
+  List<int> specialIndexesToMark(int playIndex, rowIndex) {
+    if (orderName == OrderNamePower) {
+      int offset = 1 + playIndex * 10;
+      int from = rowIndex * 10 + 1;
+      int to = from + 10;
+      return [specialBall]
+          .where((n) => n >= from && n < to)
+          .map((e) => offset + e % 10)
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  List<int> get balls {
+    return numbers.split(" ").where((element) => element != "").map((e) => int.parse(e)).toList();
+  }
+
+  List<int> get megaMixedLineBalls {
+    return <int>[]
+      ..addAll(whiteBalls.where((element) => element > 2))
+      ..add(specialBall);
+  }
+
+  List<int> get whiteBalls {
+    if( balls.length == 6) {
+      return balls.sublist(0, 5);
+    } else {
+      return [];
     }
   }
 
   int get specialBall {
-    if (orderType == OrderTypeAuto) {
-      if (orderName == OrderNameMega) {
-        return 28;
-      } else {
-        return 28;
-      }
+    if( balls.length == 6) {
+      return balls.last;
     } else {
-      return numbers.split(" ").map((e) => int.parse(e)).last;
+      return -1;
     }
   }
 }

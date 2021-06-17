@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
 import 'package:com.luckus7.lucs/view/webview.dart';
@@ -7,6 +9,7 @@ import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
@@ -20,14 +23,18 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FkUserAgent.init();
 
-  final messagingService = MessagingService();
-  messagingService.initToken();
+  if (Platform.isAndroid) {
+    await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
 
   Get.put(await PackageInfo.fromPlatform(), permanent: true);
   Get.put(await SharedPreferences.getInstance(), permanent: true);
-  Get.put(messagingService, permanent: true);
+  Get.put(MessagingService(), permanent: true);
+  await Get.find<MessagingService>().initToken();
+
   Get.put(WebViewController(), permanent: true);
   Get.put(UserMainModel(), permanent: true);
+
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent, // Color for Android

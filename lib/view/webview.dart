@@ -95,8 +95,14 @@ class WebViewController extends GetxController {
   }
 
   Widget newWebView(BuildContext context,
-      {URLRequest? initialUrlRequest, CreateWindowAction? createWindowAction}) {
+      {URLRequest? initialUrlRequest,
+      CreateWindowAction? createWindowAction,
+      List<Cookie> cookies = const []}) {
     InAppWebViewController? _controller;
+
+    cookieManager
+        .getCookies(url: Uri.parse("https://luckus7.com"))
+        .then((value) => debugPrint(jsonEncode(cookies)));
 
     return WillPopScope(
       onWillPop: () async {
@@ -106,25 +112,18 @@ class WebViewController extends GetxController {
 
         final canGoBack = await _controller!.canGoBack();
 
-        _controller?.goBack();
+        if (canGoBack) {
+          _controller?.goBack();
+        } else {
+          _controller?.evaluateJavascript(source: "window.close()");
+        }
 
         debugPrint("onWillPop.canGoBack = $canGoBack");
 
-        return !canGoBack;
+        return false;
       },
       child: InAppWebView(
         windowId: createWindowAction?.windowId,
-        onCreateWindow: (controller, createWindowRequest) async {
-          print("onCreateWindow");
-
-          await showCupertinoModalBottomSheet(
-            context: context,
-            builder: (context) =>
-                newWebView(context, createWindowAction: createWindowRequest),
-          );
-
-          return true;
-        },
         initialUrlRequest: createWindowAction != null
             ? createWindowAction.request
             : initialUrlRequest,
@@ -134,15 +133,64 @@ class WebViewController extends GetxController {
           controllers.add(controller);
           _controller = controller;
         },
+        onJsAlert: (controller, jsAlertRequest) {
+          Get.snackbar("js", jsAlertRequest.message!);
+          return Future.value(JsAlertResponse());
+        },
         onLoadStop: onLoadStop,
         onLoadError: onLoadError,
         onProgressChanged: onProgressChanged,
         onConsoleMessage: onConsoleMessage,
+        onCreateWindow: (controller, createWindowRequest) async {
+          print("onCreateWindow");
+
+          // await showCupertinoModalBottomSheet(
+          //   context: context,
+          //   builder: (context) =>
+          //       newWebView(context, createWindowAction: createWindowRequest),
+          // );
+
+          await showGeneralDialog(
+            barrierLabel: "Label",
+            barrierDismissible: true,
+            barrierColor: Colors.black.withOpacity(0.5),
+            transitionDuration: Duration(milliseconds: 200),
+            context: context,
+            pageBuilder: (context, anim1, anim2) {
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(width: MediaQuery.of(context).size.width, child: newWebView(context, createWindowAction: createWindowRequest)),
+              );
+            },
+            transitionBuilder: (context, anim1, anim2, child) {
+              return SlideTransition(
+                position: Tween(begin: Offset(0, 1), end: Offset(0, 0.1)).animate(anim1),
+                child: child,
+              );
+            },
+          );
+
+/*
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => AlertDialog(
+              contentPadding: EdgeInsets.zero,
+              insetPadding: EdgeInsets.only(top:32),
+              content:
+                  SizedBox(width: MediaQuery.of(context).size.width, child: newWebView(context, createWindowAction: createWindowRequest)),
+            ),
+          );
+*/
+
+          return true;
+        },
         onCloseWindow: (controller) {
           controllers.remove(controller);
+          Navigator.of(context).pop();
         },
         onLoadStart: (controller, url) {
-          print("onLoadStart");
+          print("onLoadStart: " + url.toString());
         },
         shouldInterceptFetchRequest: (controller, fetchRequest) {
           print("shouldInterceptFetchRequest");
@@ -156,5 +204,18 @@ class WebViewController extends GetxController {
         },
       ),
     );
+  }
+
+  windowOpen(String url) {
+    rootController.evaluateJavascript(
+        source:
+            "window.open('$url', ${DateTime.now().millisecondsSinceEpoch})");
+  }
+
+  closeAllPopups() {
+    controllers.forEach((element) {
+      if (element != rootController)
+        element.evaluateJavascript(source: "window.close();");
+    });
   }
 }
