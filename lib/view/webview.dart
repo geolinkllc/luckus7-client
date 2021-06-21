@@ -11,13 +11,11 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class WebViewController extends GetxController {
   PackageInfo packageInfo = Get.find();
   MessagingService messagingService = Get.find();
   final cookieManager = CookieManager.instance();
-  final wcookieManager = WebviewCookieManager();
 
   late InAppWebViewGroupOptions _initialOptions;
   final controllers = <InAppWebViewController>[];
