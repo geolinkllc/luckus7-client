@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:com.luckus7.lucs/model/ticket.dart';
 import 'package:com.luckus7.lucs/model/order.dart';
+import 'package:com.luckus7.lucs/network/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -109,8 +110,8 @@ class TicketService extends GetxController {
     var formData = FormData.fromMap(json);
 
     try {
-      final res = await Dio()
-          .post<dynamic>('http://34.134.22.192:8080/tickets', data: formData);
+      final res = await apicli
+          .post<dynamic>('/tickets', data: formData);
       debugPrint(jsonEncode(res.data));
       final posted = Ticket.fromJson(res.data);
 

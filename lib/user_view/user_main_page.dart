@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:package_info/package_info.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
+import '../user_app.dart';
 
 class UserMainPage extends StatelessWidget {
   UserMainModel model = Get.find();
@@ -18,47 +19,21 @@ class UserMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final initialUrl =
+        flavor == "dev" ? "https://dev.luckus7.com" : "https://luckus7.com";
+
     return Scaffold(
       body: Stack(
         children: [
-          StreamBuilder<RemoteMessage>(
-              stream: messagingService.messageStream,
-              builder: (context, snapshot) {
-                if (snapshot.data?.data.containsKey("in-link") == true) {
-                  final link = snapshot.data!.data["in-link"];
-                  WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                    showCupertinoModalBottomSheet(
-                      context: context,
-                      builder: (context) => webViewController.newWebView(
-                          context,
-                          initialUrlRequest: URLRequest(url: Uri.parse(link))),
-                    );
-                  });
-                }
-
-                return Container();
-              }),
+          messageHandler(),
           Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              StreamBuilder<int>(
-                stream: webViewController.progress,
-                builder: (context, snapshot) => AnimatedOpacity(
-                  opacity: snapshot.data == 100 || snapshot.data == 0 ? 0 : 1,
-                  duration: Duration(milliseconds: 200),
-                  child: FAProgressBar(
-                    size: MediaQuery.of(context).padding.top,
-                    backgroundColor: Colors.white,
-                    progressColor: Colors.blueAccent,
-                    borderRadius: BorderRadius.zero,
-                    currentValue: snapshot.data ?? 0,
-                  ),
-                ),
-              ),
+              progressBar(),
               Expanded(
                 child: webViewController.newWebView(context,
                     initialUrlRequest:
-                        URLRequest(url: Uri.parse("https://luckus7.com"))),
+                        URLRequest(url: Uri.parse(initialUrl))),
               ),
             ],
           )
@@ -66,4 +41,52 @@ class UserMainPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget progressBar() => StreamBuilder<int>(
+        stream: webViewController.progress,
+        builder: (context, snapshot) => AnimatedOpacity(
+          opacity: snapshot.data == 100 || snapshot.data == 0 ? 0 : 1,
+          duration: Duration(milliseconds: 200),
+          child: FAProgressBar(
+            size: MediaQuery.of(context).padding.top,
+            backgroundColor: Colors.white,
+            progressColor: Colors.blueAccent,
+            borderRadius: BorderRadius.zero,
+            currentValue: snapshot.data ?? 0,
+          ),
+        ),
+      );
+
+  Widget messageHandler() => StreamBuilder<dynamic>(
+      stream: messagingService.asyncMessageStraem,
+      builder: (context, snapshot) {
+        final data = snapshot.data;
+
+        if (data == null) {
+          return Container();
+        }
+
+        if (data is RemoteMessage) {
+          if (data.data.containsKey("in-link") == true) {
+            final link = data.data["in-link"];
+            webViewController.windowOpen(link);
+          }
+        } else if (data is JsAlertRequest) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              content: Text(data.message ?? ""),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("확인"))
+              ],
+            ),
+          );
+        }
+
+        return Container();
+      });
 }

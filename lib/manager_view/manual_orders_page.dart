@@ -73,7 +73,7 @@ class ManualOrdersPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: order.orderNumbers
                       .map((e) => Text(
-                            e.numbers,
+                            e.numbers ?? "",
                             style: TextStyle(
                               fontSize: 18,
                               wordSpacing: 5,

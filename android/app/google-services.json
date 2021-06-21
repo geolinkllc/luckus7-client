@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "387800214402",
+    "project_id": "lucs-app",
+    "storage_bucket": "lucs-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387800214402:android:a50b162d30f060e97a3d9b",
+        "android_client_info": {
+          "package_name": "com.luckus7.lucs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387800214402-2rb8sakgveop8ugie2pta8r6bu0l836b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASpoX5M1ndq1m86cEvUTNJhK2DwCLO6iQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387800214402-2rb8sakgveop8ugie2pta8r6bu0l836b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387800214402-1863b69ljhqfi4r1j0k2a3f83qn6luhb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.luckus7.lucs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387800214402:android:799d8848452966fa7a3d9b",
+        "android_client_info": {
+          "package_name": "com.luckus7.lucs.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387800214402-2rb8sakgveop8ugie2pta8r6bu0l836b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASpoX5M1ndq1m86cEvUTNJhK2DwCLO6iQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387800214402-2rb8sakgveop8ugie2pta8r6bu0l836b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387800214402-1863b69ljhqfi4r1j0k2a3f83qn6luhb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.luckus7.lucs"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

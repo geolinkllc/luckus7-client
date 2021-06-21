@@ -4,18 +4,17 @@ import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
 import 'package:com.luckus7.lucs/view/webview.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'user_view/user_main_page.dart';
+
+const flavor = String.fromEnvironment('flavor', defaultValue: 'prod');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +33,6 @@ Future<void> main() async {
 
   Get.put(WebViewController(), permanent: true);
   Get.put(UserMainModel(), permanent: true);
-
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent, // Color for Android
@@ -64,7 +62,12 @@ class MyApp extends StatelessWidget {
             // enabledBorder: OutlineInputBorder(
             //     borderSide: BorderSide(color:Theme.of(context).dividerColor)),
           )),
-      home: UserMainPage(),
+      home: flavor == "dev"
+          ? Banner(
+              message: "dev",
+              location: BannerLocation.topStart,
+              child: UserMainPage())
+          : UserMainPage(),
     );
   }
 }

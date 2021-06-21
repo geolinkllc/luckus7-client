@@ -102,7 +102,7 @@ class Order {
 class Play {
   OrderName orderName;
   OrderType orderType;
-  String numbers;
+  String? numbers;
   int flag;
   String buyType;
   int time;
@@ -158,7 +158,7 @@ class Play {
   }
 
   List<int> get balls {
-    return numbers.split(" ").where((element) => element != "").map((e) => int.parse(e)).toList();
+    return numbers?.split(" ").where((element) => element != "").map((e) => int.parse(e)).toList() ?? [];
   }
 
   List<int> get megaMixedLineBalls {

@@ -13,7 +13,7 @@ class MessagingService extends GetxController {
   final token = BehaviorSubject<String>();
 
   // ignore: close_sinks
-  final messageStream = BehaviorSubject<RemoteMessage>();
+  final asyncMessageStraem = BehaviorSubject<dynamic>();
   final messages = <String, RemoteMessage>{};
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -75,9 +75,11 @@ class MessagingService extends GetxController {
   }
 
   initToken() async {
+    print("initToken");
     final currentToken = await FirebaseMessaging.instance.getToken();
 
     if (currentToken != null) {
+      print("initToken:" + currentToken);
       token.add(currentToken);
     }
   }
