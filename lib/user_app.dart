@@ -4,6 +4,7 @@ import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
 import 'package:com.luckus7.lucs/view/webview.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +47,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return GetMaterialApp(
       title: 'LUCS',
       debugShowCheckedModeBanner: false,
