@@ -28,13 +28,13 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     signingConfigs {
         debug {
-            storeFile file('/Volumes/dev/luckus7/luckus7/android/cushion.jks')
+            storeFile file('../cushion.jks')
             storePassword 'cushion'
             keyAlias 'cushion'
             keyPassword 'cushion'
         }
         release {
-            storeFile file('/Volumes/dev/luckus7/luckus7/android/cushion.jks')
+            storeFile file('../cushion.jks')
             storePassword 'cushion'
             keyAlias 'cushion'
             keyPassword 'cushion'
