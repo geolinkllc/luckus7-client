@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:com.luckus7.lucs/view/webview.dart';
+import 'package:com.luckus7.lucs/view/webview_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
-import 'package:com.luckus7.lucs/view/webview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
@@ -14,6 +13,7 @@ import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'user_view/user_main_page.dart';
+import 'view/webview_controller.dart';
 
 const flavor = String.fromEnvironment('flavor', defaultValue: 'prod');
 

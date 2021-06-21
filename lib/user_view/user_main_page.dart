@@ -1,6 +1,6 @@
 import 'package:com.luckus7.lucs/service/messaging_service.dart';
 import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
-import 'package:com.luckus7.lucs/view/webview.dart';
+import 'package:com.luckus7.lucs/view/webview_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
@@ -31,7 +31,7 @@ class UserMainPage extends StatelessWidget {
             children: [
               progressBar(),
               Expanded(
-                child: webViewController.newWebView(context,
+                child: webViewController.createWebView(context,
                     initialUrlRequest:
                         URLRequest(url: Uri.parse(initialUrl))),
               ),
