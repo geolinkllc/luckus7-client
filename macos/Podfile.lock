@@ -3,13 +3,21 @@ PODS:
     - FlutterMacOS
   - Firebase/CoreOnly (8.0.0):
     - FirebaseCore (= 8.0.0)
+  - Firebase/Crashlytics (8.0.0):
+    - Firebase/CoreOnly
+    - FirebaseCrashlytics (~> 8.0.0)
   - Firebase/Messaging (8.0.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.0.0)
-  - firebase_core (1.2.1):
+  - firebase_core (1.3.0):
     - Firebase/CoreOnly (~> 8.0.0)
     - FlutterMacOS
-  - firebase_messaging (10.0.1):
+  - firebase_crashlytics (2.0.6):
+    - Firebase/CoreOnly (~> 8.0.0)
+    - Firebase/Crashlytics (~> 8.0.0)
+    - firebase_core
+    - FlutterMacOS
+  - firebase_messaging (10.0.2):
     - Firebase/CoreOnly (~> 8.0.0)
     - Firebase/Messaging (~> 8.0.0)
     - firebase_core
@@ -23,6 +31,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
     - nanopb (~> 2.30908.0)
+  - FirebaseCrashlytics (8.0.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleDataTransport (~> 9.0)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (~> 1.2)
   - FirebaseInstallations (8.0.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
@@ -79,6 +93,7 @@ PODS:
 DEPENDENCIES:
   - desktop_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_window/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
+  - firebase_crashlytics (from `Flutter/ephemeral/.symlinks/plugins/firebase_crashlytics/macos`)
   - firebase_messaging (from `Flutter/ephemeral/.symlinks/plugins/firebase_messaging/macos`)
   - flutter_local_notifications (from `Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
@@ -93,6 +108,7 @@ SPEC REPOS:
     - Firebase
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseCrashlytics
     - FirebaseInstallations
     - FirebaseMessaging
     - GoogleDataTransport
@@ -105,6 +121,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/desktop_window/macos
   firebase_core:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_core/macos
+  firebase_crashlytics:
+    :path: Flutter/ephemeral/.symlinks/plugins/firebase_crashlytics/macos
   firebase_messaging:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_messaging/macos
   flutter_local_notifications:
@@ -125,10 +143,12 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   desktop_window: fb7c4f12c1129f947ac482296b6f14059d57a3c3
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
-  firebase_core: 4623e421b8f97b44a02bb0ca8ae1249980149194
-  firebase_messaging: e034fde96ee2cdce80ee5a3a1f7f2f536fe0cd2b
+  firebase_core: 093b16f7f0024146f7486132dee4d8661a3f5e3b
+  firebase_crashlytics: b1fcb8e79609caaf18a3547bb3223ad62c281e89
+  firebase_messaging: ca598f7608c62cc62797522f2c181da4312c7c8e
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
   FirebaseCoreDiagnostics: a31d987ba0fe16d59886a5dbadc2f1de871f88c8
+  FirebaseCrashlytics: 69cddb6bfa7656c5346e603bc85b029392252ee6
   FirebaseInstallations: c4aab1005d6547b00a7529777fe52f5d4d45165b
   FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
   flutter_local_notifications: 3805ca215b2fb7f397d78b66db91f6a747af52e4
