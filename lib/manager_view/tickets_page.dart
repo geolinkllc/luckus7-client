@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:com.luckus7.lucs/model/order.dart';
 import 'package:com.luckus7.lucs/model/order.dart';
@@ -75,7 +76,7 @@ class TicketsPage extends StatelessWidget {
                                 value: OrderNameMega,
                                 groupValue: t.orderName,
                                 onChanged: (value) {
-                                  service.modify(t..orderName =OrderNameMega);
+                                  service.modify(t..orderName = OrderNameMega);
                                 },
                               ),
                               Text("메가", style: TextStyle(fontSize: 18)),
@@ -83,11 +84,32 @@ class TicketsPage extends StatelessWidget {
                                 value: OrderNamePower,
                                 groupValue: t.orderName,
                                 onChanged: (value) {
-                                  service.modify(t..orderName =OrderNamePower);
+                                  service.modify(t..orderName = OrderNamePower);
                                 },
                               ),
                               Text("파워볼", style: TextStyle(fontSize: 18)),
                             ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Container(
+                            width: 270,
+                            child: TextField(
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                                controller: t.drawNumberController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                decoration: InputDecoration(
+                                  suffix: Text("회"),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    labelText: "회차")),
                           ),
                           SizedBox(
                             height: 8,
@@ -110,7 +132,7 @@ class TicketsPage extends StatelessWidget {
                               keyboardType: TextInputType.multiline,
                               minLines: 1,
                               maxLines: 10,
-                              controller: t.controller,
+                              controller: t.numbersController,
                             ),
                           ),
                           SizedBox(

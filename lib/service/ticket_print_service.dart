@@ -49,7 +49,4 @@ class TicketPrintService extends GetxController {
     }
     return pages;
   }
-
-
-
 }

@@ -19,8 +19,11 @@ class UserMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initialUrl =
+    var initialUrl =
         flavor == "dev" ? "https://dev.luckus7.com" : "https://luckus7.com";
+
+    // initialUrl = "https://dev.luckus7.com/theme/basic/mobile/ticket.php?img=/img/lottery/img_2_11971624321401.jpg";
+    // initialUrl = "https://dev.luckus7.com/theme/basic/mobile/ticket.php?img=%2Fimg%2Flottery%2Fimg_2_11971624321401.jpg";
 
     return Scaffold(
       body: Stack(

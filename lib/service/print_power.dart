@@ -6,9 +6,21 @@ import 'package:pdf/widgets.dart' as pw;
 final ticketWidth = 18.75.cm;
 final ticketHeight = 8.25.cm;
 final columnCnt = 53;
+final redColor = const PdfColor(1, 0.5, 0.5);
 
 pw.Page renderPowerPage(List<Order> orders) {
-  final orderWidgets = orders.map((e) => renderPowerOrder(e)).toList();
+  final games = <pw.Widget>[];
+  games.add(pw.Container(
+      width: double.infinity, height: 0.5, color: redColor));
+  orders.forEach((element) {
+    games.add(pw.Row(children: [
+      renderPowerOrder(element),
+      pw.Expanded(child: pw.Container()),
+      pw.Text("P\nO\nW\nE\nR\nB\nA\nL\nL", style: pw.TextStyle(color: redColor)),
+    ]));
+    games.add(pw.Container(
+        width: double.infinity, height: 0.5, color: redColor));
+  });
 
   return pw.Page(
       margin: pw.EdgeInsets.all(20),
@@ -16,7 +28,10 @@ pw.Page renderPowerPage(List<Order> orders) {
       orientation: pw.PageOrientation.portrait,
       build: (pw.Context context) {
         // return pw.Column(children: orders.map((e) => renderOrder(e)).toList());
-        return pw.Column(children: orderWidgets);
+        return pw.Column(
+            children: games,
+            mainAxisAlignment: pw.MainAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start);
         // return pw.Column(children: [pw.Text("page"),pw.Text("page"),pw.Text("page"),pw.Text("page")]);
         // return pw.Text("page");
       });
@@ -60,7 +75,7 @@ pw.Widget renderPowerOrder(Order order) {
   return pw.Container(
       height: ticketHeight,
       width: ticketWidth,
-      margin: pw.EdgeInsets.only(bottom: 1),
+      // margin: pw.EdgeInsets.only(bottom: 1),
       // decoration: pw.BoxDecoration(
       //     border: pw.Border(
       //         left: border, bottom: border, right: border, top: border)),
@@ -126,10 +141,10 @@ pw.Widget powerMarker(int number, bool marked) {
       child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
         pw.Container(
             alignment: pw.Alignment.center,
-            child: number <= 0
-                ? null
-                : pw.Text(number.toString(),
-                    style: pw.TextStyle(fontSize: 5, color: PdfColor(1, 0, 0))),
+            // child: number <= 0
+            //     ? null
+            //     : pw.Text(number.toString(),
+            //         style: pw.TextStyle(fontSize: 5, color: PdfColor(1, 1, 1))),
             width: 0.2.cm,
             height: 0.4.cm,
             color: marked ? PdfColor(0, 0, 0) : PdfColor(1, 1, 1))

@@ -104,6 +104,7 @@ class TicketService extends GetxController {
     final pathDelim = Platform.isWindows ? "\\" : "/";
 
     var json = t.toJson();
+    print(json);
     json["file"] = await MultipartFile.fromFile(t.filePath,
         filename: t.filePath.split(pathDelim).last);
 

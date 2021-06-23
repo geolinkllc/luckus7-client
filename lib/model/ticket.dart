@@ -10,6 +10,9 @@ const TicketProcessReadFailed = "readFailed";
 const TicketProcessReadError = "readError";
 const TicketProcessMatchFailed = "matchFailed";
 const TicketProcessAssignError = "assignError";
+const TicketProcessSystemError = "systemError";
+const TicketProcessClosed = "closed";
+const TicketProcessInvalidDrawNumber = "invalidDrawNumber";
 
 extension TicketProcessExtention on TicketProcess {
   String get text {
@@ -26,6 +29,12 @@ extension TicketProcessExtention on TicketProcess {
         return "주문매칭실패";
       case TicketProcessAssignError:
         return "주문매칭오류";
+      case TicketProcessSystemError:
+        return "시스템오류";
+      case TicketProcessClosed:
+        return "마감된회차";
+      case TicketProcessInvalidDrawNumber:
+        return "유효하지않은회차";
       default:
         return "";
     }
@@ -39,15 +48,19 @@ class Ticket {
   String? barCode;
   TicketProcess process = TicketProcessProcessing;
   String? numbers;
-  TextEditingController controller;
+  int? drawNumber;
+  TextEditingController drawNumberController;
+  TextEditingController numbersController;
 
   Ticket(this.filePath,
       {this.orderName,
       this.qrCode,
       this.barCode,
       this.numbers,
+      this.drawNumber,
       this.process = TicketProcessProcessing})
-      : controller = TextEditingController(text: numbers);
+      : drawNumberController = TextEditingController(text: drawNumber?.toString() ?? ""),
+        numbersController = TextEditingController(text: numbers);
 
   Ticket.fromJson(dynamic json)
       : filePath = json["filePath"],
@@ -56,17 +69,22 @@ class Ticket {
         barCode = json["barCode"],
         process = json["process"],
         numbers = json["numbers"],
-        controller = TextEditingController(text: json["numbers"]);
+        drawNumber = json["drawNumber"],
+        drawNumberController = TextEditingController(text: "${json["drawNumber"] ?? ''}"),
+        numbersController = TextEditingController(text: json["numbers"])
+  ;
 
   Map<String, dynamic> toJson() {
+    final drawNumberText = drawNumberController.text;
+    final drawNumber = drawNumberText != "" ? int.parse(drawNumberText) : 0;
     var map = <String, dynamic>{};
     map["filePath"] = filePath;
     map["orderName"] = orderName;
     map["qrCode"] = qrCode;
     map["barCode"] = barCode;
     map["process"] = process;
-    map["numbers"] = controller.text;
+    map["drawNumber"] = drawNumber;
+    map["numbers"] = numbersController.text;
     return map;
   }
-
 }

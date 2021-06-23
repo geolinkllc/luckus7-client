@@ -2,11 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:com.luckus7.lucs/service/messaging_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -49,8 +46,19 @@ class WebViewController extends GetxController {
       ),
       android: AndroidInAppWebViewOptions(
         builtInZoomControls: false,
-        useHybridComposition: true,
+        useHybridComposition: false,
         supportMultipleWindows: true,
+        domStorageEnabled: true,
+        mixedContentMode: AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+        loadsImagesAutomatically: true,
+        blockNetworkImage: false,
+        blockNetworkLoads: false,
+        appCachePath: "",
+        thirdPartyCookiesEnabled: true,
+        defaultTextEncodingName: "UTF-8",
+        allowFileAccess: true,
+        databaseEnabled: true,
+        allowContentAccess: true,
       ),
     );
   }
@@ -78,9 +86,12 @@ class WebViewController extends GetxController {
   }
 
   onLoadError(
-      InAppWebViewController controller, Uri? url, int code, String message) {}
+      InAppWebViewController controller, Uri? url, int code, String message) {
+    print("onLoadError: " + (url?.toString() ?? "") + " : " + message);
+  }
 
   onLoadStop(InAppWebViewController controller, Uri? url) async {
+    print("onLoadStop: " + (url?.toString() ?? ""));
   }
 
   Future<bool> onWillPop() async {
@@ -103,20 +114,21 @@ class WebViewController extends GetxController {
       {URLRequest? initialUrlRequest,
       CreateWindowAction? createWindowAction,
       List<Cookie> cookies = const []}) {
-    InAppWebViewController? _controller;
+
+    final req = createWindowAction != null
+        ? createWindowAction.request
+        : initialUrlRequest;
+
 
     return InAppWebView(
       key: UniqueKey(),
       // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[Factory(() => EagerGestureRecognizer())].toSet(),
       windowId: createWindowAction?.windowId,
-      initialUrlRequest: createWindowAction != null
-          ? createWindowAction.request
-          : initialUrlRequest,
+      initialUrlRequest: req,
       // initialHeaders: {},
       initialOptions: _initialOptions,
       onWebViewCreated: (controller) {
         controllers.add(controller);
-        _controller = controller;
       },
       onJsAlert: (controller, jsAlertRequest) {
         return Future.value(JsAlertResponse());
@@ -126,30 +138,31 @@ class WebViewController extends GetxController {
       onProgressChanged: onProgressChanged,
       onConsoleMessage: onConsoleMessage,
       onCreateWindow: (controller, createWindowRequest) async {
-        final url = createWindowRequest.request.url.toString().toLowerCase();
-        if (url.endsWith("png") ||
-            url.endsWith("jpg") ||
-            url.endsWith("jpeg")) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              contentPadding: EdgeInsets.zero,
-              backgroundColor: Colors.white,
-              content: Image.network(
-                createWindowRequest.request.url.toString(),
-                width: MediaQuery.of(context).size.width * 0.9,
-                // height: MediaQuery.of(context).size.height * 0.9,
-              ),
-            ),
-          );
-        } else {
+        // final url = createWindowRequest.request.url.toString().toLowerCase();
+        //   print(url);
+        // if (url.endsWith("png") ||
+        //     url.endsWith("jpg") ||
+        //     url.endsWith("jpeg")) {
+        //   showDialog(
+        //     context: context,
+        //     builder: (context) => AlertDialog(
+        //       contentPadding: EdgeInsets.zero,
+        //       backgroundColor: Colors.white,
+        //       content: Image.network(
+        //         createWindowRequest.request.url.toString(),
+        //         width: MediaQuery.of(context).size.width * 0.9,
+        //         // height: MediaQuery.of(context).size.height * 0.9,
+        //       ),
+        //     ),
+        //   );
+        // } else {
           showModalBottomSheet(
             elevation: 8,
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (context) => Container(
-              height: MediaQuery.of(context).size.height * 0.9,
+              height: MediaQuery.of(context).size.height * (1 - controllers.length * 0.05),
               decoration: new BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
@@ -162,16 +175,18 @@ class WebViewController extends GetxController {
                   child: createWebView(context,
                       createWindowAction: createWindowRequest)),
             ),
-          );
-        }
+          ).then((value) {
+            controllers.remove(currentController);
+            return null;
+          });
+        // }
         return true;
       },
       onCloseWindow: (controller) {
-        controllers.remove(controller);
         Navigator.of(context).pop();
       },
       onLoadStart: (controller, url) {
-        // print("onLoadStart: " + url.toString());
+        print("onLoadStart: " + url.toString());
       },
       shouldInterceptFetchRequest: (controller, fetchRequest) {
         print("shouldInterceptFetchRequest");
