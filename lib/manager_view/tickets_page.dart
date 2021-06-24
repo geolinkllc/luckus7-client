@@ -4,10 +4,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:com.luckus7.lucs/model/order.dart';
-import 'package:com.luckus7.lucs/model/order.dart';
-import 'package:com.luckus7.lucs/model/ticket.dart';
-import 'package:com.luckus7.lucs/service/ticket_service.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+import 'package:com.cushion.lucs/model/ticket.dart';
+import 'package:com.cushion.lucs/service/ticket_service.dart';
 
 // ignore: must_be_immutable
 class TicketsPage extends StatelessWidget {

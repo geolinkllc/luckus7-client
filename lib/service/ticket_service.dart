@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:com.luckus7.lucs/model/ticket.dart';
-import 'package:com.luckus7.lucs/model/order.dart';
-import 'package:com.luckus7.lucs/network/api_client.dart';
+import 'package:com.cushion.lucs/model/ticket.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+import 'package:com.cushion.lucs/network/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/cupertino.dart';

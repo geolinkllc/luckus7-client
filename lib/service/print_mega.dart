@@ -1,8 +1,8 @@
-import 'package:com.luckus7.lucs/model/order.dart';
+import 'package:com.cushion.lucs/model/order.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:com.luckus7.lucs/model/order_status.dart';
-import 'package:com.luckus7.lucs/extentions.dart';
+import 'package:com.cushion.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/extentions.dart';
 
 final ticketHeight = 18.75.cm;
 final ticketWidth = 8.2.cm;

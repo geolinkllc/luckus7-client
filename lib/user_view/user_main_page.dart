@@ -1,6 +1,5 @@
-import 'package:com.luckus7.lucs/service/messaging_service.dart';
-import 'package:com.luckus7.lucs/user_view/user_main_model.dart';
-import 'package:com.luckus7.lucs/view/webview_controller.dart';
+import 'package:com.cushion.lucs/service/messaging_service.dart';
+import 'package:com.cushion.lucs/view/webview_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
@@ -10,6 +9,7 @@ import 'package:package_info/package_info.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../user_app.dart';
+import 'user_main_model.dart';
 
 class UserMainPage extends StatelessWidget {
   UserMainModel model = Get.find();

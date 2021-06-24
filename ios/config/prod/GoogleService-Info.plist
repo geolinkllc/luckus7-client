@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>387800214402-1863b69ljhqfi4r1j0k2a3f83qn6luhb.apps.googleusercontent.com</string>
+	<string>387800214402-j2fhanl6rr80ds02bq2fgfp7ik2pi03e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.387800214402-1863b69ljhqfi4r1j0k2a3f83qn6luhb</string>
+	<string>com.googleusercontent.apps.387800214402-j2fhanl6rr80ds02bq2fgfp7ik2pi03e</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCY9xsLjb8f8dObvSOdZimI_b7JN8IS-Z4</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.luckus7.lucs</string>
+	<string>com.cushion.lucs</string>
 	<key>PROJECT_ID</key>
 	<string>lucs-app</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:387800214402:ios:a32bae90e12950097a3d9b</string>
+	<string>1:387800214402:ios:96687ee263ff42087a3d9b</string>
 </dict>
 </plist>

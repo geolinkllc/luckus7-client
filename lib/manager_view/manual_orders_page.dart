@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:com.luckus7.lucs/model/order_status.dart';
-import 'package:com.luckus7.lucs/model/order.dart';
-import 'package:com.luckus7.lucs/service/order_service.dart';
+import 'package:com.cushion.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+import 'package:com.cushion.lucs/service/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

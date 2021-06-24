@@ -1,5 +1,5 @@
-import 'package:com.luckus7.lucs/extentions.dart';
-import 'package:com.luckus7.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/extentions.dart';
+import 'package:com.cushion.lucs/model/order_status.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 

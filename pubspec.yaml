@@ -1,5 +1,5 @@
-name: com.luckus7.lucs
-description: luckus7
+name: com.cushion.lucs
+description: lucs
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+3

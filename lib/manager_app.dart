@@ -1,12 +1,12 @@
-import 'package:com.luckus7.lucs/network/api_client.dart';
-import 'package:com.luckus7.lucs/service/ticket_print_service.dart';
-import 'package:com.luckus7.lucs/service/ticket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'network/api_client.dart';
 import 'service/order_service.dart';
 import 'manager_view/main_page.dart';
+import 'service/ticket_print_service.dart';
+import 'service/ticket_service.dart';
 
 const flavor = String.fromEnvironment('flavor', defaultValue: 'prod');
 

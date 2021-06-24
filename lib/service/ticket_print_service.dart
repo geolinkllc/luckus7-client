@@ -1,6 +1,6 @@
-import 'package:com.luckus7.lucs/model/order.dart';
-import 'package:com.luckus7.lucs/model/order_status.dart';
-import 'package:com.luckus7.lucs/service/print_mega.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+import 'package:com.cushion.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/service/print_mega.dart';
 import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;

@@ -1,0 +1,1 @@
+flutter build $1 --flavor $2 --dart-define=flavor=$2 -t lib/user_app.dart

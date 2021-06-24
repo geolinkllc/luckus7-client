@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:com.luckus7.lucs/model/order_status.dart';
-import 'package:com.luckus7.lucs/network/api_client.dart';
+import 'package:com.cushion.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/network/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';

@@ -1,4 +1,4 @@
-package com.luckus7.lucs
+package com.cushion.lucs
 
 import io.flutter.embedding.android.FlutterActivity
 
