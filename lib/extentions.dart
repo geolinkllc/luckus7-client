@@ -22,3 +22,9 @@ extension DoubleExtention on double {
 extension IntExtention on int {
   double get cm => this * cmpt;
 }
+
+extension StringExtention on String {
+  num get numValue {
+    return num.tryParse(this.trim().replaceAll(",", "")) ?? 0;
+  }
+}

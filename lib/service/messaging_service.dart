@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MessagingService extends GetxController {
   // ignore: close_sinks
   final token = BehaviorSubject<String>();
+  PackageInfo packageInfo = Get.find();
 
   // ignore: close_sinks
   final asyncMessageStraem = BehaviorSubject<dynamic>();
@@ -37,6 +39,7 @@ class MessagingService extends GetxController {
     FirebaseMessaging.instance.onTokenRefresh.listen((event) {
       debugPrint("onTokenRefresh:$event");
       token.add(event);
+      subscribeTopics();
     });
   }
 
@@ -75,13 +78,19 @@ class MessagingService extends GetxController {
   }
 
   initToken() async {
-    print("initToken");
     final currentToken = await FirebaseMessaging.instance.getToken();
 
     if (currentToken != null) {
-      print("initToken:" + currentToken);
       token.add(currentToken);
+      subscribeTopics();
     }
+  }
+
+  subscribeTopics(){
+    String os = Platform.isAndroid ? "aos" : "ios";
+
+    FirebaseMessaging.instance.subscribeToTopic(os);
+    FirebaseMessaging.instance.subscribeToTopic(packageInfo.packageName);
   }
 
   String storeMessage(RemoteMessage message) {

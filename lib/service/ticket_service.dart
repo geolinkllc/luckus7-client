@@ -121,7 +121,6 @@ class TicketService extends GetxController {
           ..removeWhere((element) => element.filePath == t.filePath);
 
         File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits)).deleteSync();
-        Get.find<OrderService>().loadOrderStatus(forceRefresh: false);
       } else {
         modify(posted);
       }

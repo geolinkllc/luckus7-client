@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:com.cushion.lucs/network/api_client.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:fk_user_agent/fk_user_agent.dart';
@@ -10,12 +11,11 @@ import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'flavor.dart';
 import 'service/messaging_service.dart';
 import 'user_view/user_main_model.dart';
 import 'user_view/user_main_page.dart';
 import 'view/webview_controller.dart';
-
-const flavor = String.fromEnvironment('flavor', defaultValue: 'prod');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +29,7 @@ Future<void> main() async {
 
   Get.put(await PackageInfo.fromPlatform(), permanent: true);
   Get.put(await SharedPreferences.getInstance(), permanent: true);
+  Get.put(ApiClient.create(), permanent: true);
   Get.put(MessagingService(), permanent: true);
   await Get.find<MessagingService>().initToken();
 
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
       title: 'LUCS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        backgroundColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
                 primary: Colors.blue, backgroundColor: Colors.white),
@@ -64,7 +67,7 @@ class MyApp extends StatelessWidget {
             // enabledBorder: OutlineInputBorder(
             //     borderSide: BorderSide(color:Theme.of(context).dividerColor)),
           )),
-      home: flavor == "dev"
+      home: isDev
           ? Banner(
               message: "dev",
               location: BannerLocation.topStart,

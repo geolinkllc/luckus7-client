@@ -28,7 +28,7 @@ class WebViewController extends GetxController {
   WebViewController() {
     _initialOptions = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
-        transparentBackground: true,
+        transparentBackground: false,
         // applicationNameForUserAgent:
         //     "${FkUserAgent.userAgent!} Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
         supportZoom: false,
@@ -91,7 +91,7 @@ class WebViewController extends GetxController {
   }
 
   onLoadStop(InAppWebViewController controller, Uri? url) async {
-    print("onLoadStop: " + (url?.toString() ?? ""));
+    // print("onLoadStop: " + (url?.toString() ?? ""));
   }
 
   Future<bool> onWillPop() async {
@@ -138,55 +138,35 @@ class WebViewController extends GetxController {
       onProgressChanged: onProgressChanged,
       onConsoleMessage: onConsoleMessage,
       onCreateWindow: (controller, createWindowRequest) async {
-        // final url = createWindowRequest.request.url.toString().toLowerCase();
-        //   print(url);
-        // if (url.endsWith("png") ||
-        //     url.endsWith("jpg") ||
-        //     url.endsWith("jpeg")) {
-        //   showDialog(
-        //     context: context,
-        //     builder: (context) => AlertDialog(
-        //       contentPadding: EdgeInsets.zero,
-        //       backgroundColor: Colors.white,
-        //       content: Image.network(
-        //         createWindowRequest.request.url.toString(),
-        //         width: MediaQuery.of(context).size.width * 0.9,
-        //         // height: MediaQuery.of(context).size.height * 0.9,
-        //       ),
-        //     ),
-        //   );
-        // } else {
-          showModalBottomSheet(
-            elevation: 8,
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => Container(
-              height: MediaQuery.of(context).size.height * (1 - controllers.length * 0.05),
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(10.0),
-                  topRight: const Radius.circular(10.0),
-                ),
+        final url = createWindowRequest.request.url.toString().toLowerCase();
+          print(url);
+        showModalBottomSheet(
+          elevation: 8,
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => Container(
+            height: MediaQuery.of(context).size.height * (1 - controllers.length * 0.05),
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(10.0),
+                topRight: const Radius.circular(10.0),
               ),
-              child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                  child: createWebView(context,
-                      createWindowAction: createWindowRequest)),
             ),
-          ).then((value) {
-            controllers.remove(currentController);
-            return null;
-          });
-        // }
+            child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                child: createWebView(context,
+                    createWindowAction: createWindowRequest)),
+          ),
+        );
         return true;
       },
       onCloseWindow: (controller) {
         Navigator.of(context).pop();
       },
       onLoadStart: (controller, url) {
-        print("onLoadStart: " + url.toString());
+        // print("onLoadStart: " + url.toString());
       },
       shouldInterceptFetchRequest: (controller, fetchRequest) {
         print("shouldInterceptFetchRequest");

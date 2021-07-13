@@ -18,6 +18,9 @@ class OrderService extends GetxController {
   void onInit() {
     super.onInit();
     loadOrderStatus();
+
+    const oneSec = const Duration(seconds:1);
+    Timer.periodic(oneSec, (Timer t) => loadOrderStatus());
   }
 
   loadOrderStatus({forceRefresh = false}) async {
