@@ -64,24 +64,31 @@ class ManualOrdersPage extends StatelessWidget {
             side: BorderSide(color: Colors.black38, width: 0.5)),
         borderOnForeground: true,
         margin: EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: order.orderNumbers
-                      .map((e) => Text(
-                            e.numbers ?? "",
-                            style: TextStyle(
-                              fontSize: 18,
-                              wordSpacing: 5,
-                              fontFeatures: [FontFeature.tabularFigures()],
-                            ),
-                          ))
-                      .toList()),
-            ],
+        child: InkWell(
+          onTap: () {
+            if( order.isIssued) {
+              showDialog(context: context, builder: (context) => AlertDialog(content: Image.network(order.ticketImageUrl, width: 400,),),);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: order.orderNumbers
+                        .map((e) => Text(
+                              e.numbers ?? "",
+                              style: TextStyle(
+                                fontSize: 18,
+                                wordSpacing: 5,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ))
+                        .toList()),
+              ],
+            ),
           ),
         ),
       );

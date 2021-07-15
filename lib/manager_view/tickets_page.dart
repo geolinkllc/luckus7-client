@@ -93,6 +93,7 @@ class TicketsPage extends StatelessWidget {
                           SizedBox(
                             height: 8,
                           ),
+/*
                           Container(
                             width: 270,
                             child: TextField(
@@ -111,6 +112,7 @@ class TicketsPage extends StatelessWidget {
                                         FloatingLabelBehavior.always,
                                     labelText: "회차")),
                           ),
+*/
                           SizedBox(
                             height: 8,
                           ),

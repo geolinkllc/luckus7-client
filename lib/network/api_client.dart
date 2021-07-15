@@ -6,8 +6,6 @@ import '../manager_app.dart';
 
 class ApiClient{
   static Dio create(){
-    String apiHost = isDev ? "https://dev.luckus7.com/api" : "https://luckus7.com/api";
-
     final option = BaseOptions(
       baseUrl: apiHost,
       connectTimeout: 1000 * 60,
@@ -22,4 +20,6 @@ class ApiClient{
   }
 }
 
-get apicli => Get.find<Dio>();
+String get webHost => isDev ? "https://dev.luckus7.com" : "https://luckus7.com";
+String get apiHost => webHost + "/api";
+Dio get apicli => Get.find<Dio>();

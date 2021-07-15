@@ -1,3 +1,4 @@
+import 'package:com.cushion.lucs/model/order_status.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,13 +28,20 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+/*
         leading: IconButton(
           icon: Icon(Icons.refresh_rounded),
           onPressed: () => orderService.loadOrderStatus(forceRefresh: true),
         ),
+*/
         elevation: 1,
       centerTitle: true,
-      title: Text("LUCS", style: TextStyle(fontSize: 24), ),
+      title: StreamBuilder<OrderStatus?>(
+        stream: orderService.status,
+        builder: (context, snapshot) {
+          return Text((snapshot.data?.date ?? "") + " 발권" + (snapshot.data?.isComplete == true ? " 완료" : ""), style: TextStyle(fontSize: 24), );
+        }
+      ),
         actions: [
           StreamBuilder<String>(
               stream: ticketService.incomingFolder,
@@ -55,6 +63,7 @@ class MainPage extends StatelessWidget {
                   style: TextStyle(color: Colors.black54),
                 )),
           ),
+/*
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: OutlinedButton(
@@ -64,6 +73,7 @@ class MainPage extends StatelessWidget {
                   style: TextStyle(color: Colors.black54),
                 )),
           ),
+*/
         ],
       ),
       body: Row(

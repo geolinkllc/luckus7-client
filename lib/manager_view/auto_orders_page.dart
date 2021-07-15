@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:com.cushion.lucs/extentions.dart';
@@ -58,92 +60,75 @@ class AutoOrdersPage extends StatelessWidget {
                           style: TextStyle(fontSize: 16),
                         )),
                       ],
-                      rows: [for (var i = 0; i < 10; i += 1) i].map((e) {
+                      rows: [for (var i = 0; i < 10; i++) i].map((e) {
                         final gameCnt = e + 1;
-                        final megaOrders = status.mega.autoOrderCounts[e];
-                        final powerOrders = status.power.autoOrderCounts[e];
 
                         return DataRow(cells: [
                           DataCell(Text(
                             "$gameCnt 줄",
                             style: TextStyle(fontSize: 16),
                           )),
-                          DataCell(Container(
-                            color: megaOrders.issuedCnt == megaOrders.totalCnt && megaOrders.totalCnt > 0 ? Colors.lightBlue[100] : null,
-                            child: Text(
-                              "${megaOrders.issuedCnt} / ${megaOrders.totalCnt} 장",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(fontSize: 16, color: megaOrders.totalCnt == 0 ? Colors.grey : null),
-                            ),
-                          )),
-                          DataCell(Container(
-                            color: powerOrders.issuedCnt == powerOrders.totalCnt && powerOrders.totalCnt > 0 ? Colors.lightBlue[100] : null,
-                            child: Text(
-                                "${powerOrders.issuedCnt} / ${powerOrders.totalCnt} 장",
-                                textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 16, color: powerOrders.totalCnt == 0 ? Colors.grey : null)),
-                          )),
+                          cellForPlayCnt(context, status, "mega", gameCnt),
+                          cellForPlayCnt(context, status, "power", gameCnt),
                         ]);
                       }).toList(),
-                      /*rows: [
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text(
-                          "0 / 20 장",
-                          textAlign: TextAlign.right,
-                        )),
-                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장", textAlign: TextAlign.center)),
-                        DataCell(Text("10 / 30 장", textAlign: TextAlign.center)),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text("1 줄")),
-                        DataCell(Text("0 / 20 장")),
-                        DataCell(Text("10 / 30 장")),
-                      ]),
-                    ]*/
                     ),
                   ),
                 );
               })
         ],
       );
+
+  DataCell cellForPlayCnt(
+      BuildContext context, OrderStatus status, String orderName, int playCnt) {
+    final gameStatus = orderName == "mega" ? status.mega : status.power;
+    final orderCnt = gameStatus.autoOrderCounts[playCnt - 1];
+
+    return DataCell(
+        Container(
+          color:
+              orderCnt.issuedCnt == orderCnt.totalCnt && orderCnt.totalCnt > 0
+                  ? Colors.lightBlue[100]
+                  : null,
+          child: Text(
+            "${orderCnt.issuedCnt} / ${orderCnt.totalCnt} 장",
+            textAlign: TextAlign.right,
+            style: TextStyle(
+                fontSize: 16,
+                color: orderCnt.totalCnt == 0 ? Colors.grey : null),
+          ),
+        ), onTap: () {
+      final issuedOrders = gameStatus.getIssuedAutoOrdersByPlayCnt(playCnt);
+      if (issuedOrders.isEmpty) {
+        return;
+      }
+
+      print(issuedOrders.map((e) => e.ticketImageUrl).join("\n"));
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Container(
+            height: 800,
+            width: [1400, 400 * issuedOrders.length].reduce(min).toDouble(),
+            padding: EdgeInsets.all(10),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: issuedOrders
+                  .map((e) => e.ticketImageUrl)
+                  .map((e) => Image.network(
+                        e,
+                        width: 400,
+                      ))
+                  .map((e) => Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: e,
+                      ))
+                  .toList(),
+            ),
+          ),
+        ),
+      );
+    });
+  }
 }

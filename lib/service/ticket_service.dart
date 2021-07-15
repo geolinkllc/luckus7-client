@@ -80,8 +80,14 @@ class TicketService extends GetxController {
     watcher?.events.listen((event) {
       if (event.type == ChangeType.ADD) {
         onFileAdded(event.path);
+      } else if( event.type == ChangeType.REMOVE) {
+        onFileRemoved(event.path);
       }
     });
+  }
+
+  onFileRemoved(String filePath) async {
+    tickets.value = tickets.value..removeWhere((element) => element.filePath == filePath);
   }
 
   onFileAdded(String filePath) async {

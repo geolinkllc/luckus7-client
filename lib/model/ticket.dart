@@ -13,6 +13,8 @@ const TicketProcessAssignError = "assignError";
 const TicketProcessSystemError = "systemError";
 const TicketProcessClosed = "closed";
 const TicketProcessInvalidDrawNumber = "invalidDrawNumber";
+const TicketProcessAlreadyAssigned = "alreadyAssigned";
+const TicketProcessInvalidNumber = "invalidNumber";
 
 extension TicketProcessExtention on TicketProcess {
   String get text {
@@ -35,6 +37,10 @@ extension TicketProcessExtention on TicketProcess {
         return "마감된회차";
       case TicketProcessInvalidDrawNumber:
         return "유효하지않은회차";
+      case TicketProcessAlreadyAssigned:
+        return "발급완료된복권";
+      case TicketProcessInvalidNumber:
+        return "유효하지않은번호";
       default:
         return "";
     }

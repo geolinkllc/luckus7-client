@@ -1,19 +1,27 @@
+import 'package:com.cushion.lucs/network/api_client.dart';
+
 import 'order.dart';
 
 class OrderStatus {
+  String date;
   GameOrderStatus mega;
   GameOrderStatus power;
+  bool isComplete;
 
-  OrderStatus(this.mega, this.power);
+  OrderStatus(this.date, this.mega, this.power, this.isComplete);
 
   OrderStatus.fromJson(dynamic json)
-      : mega = GameOrderStatus.fromJson(json["mega"]),
-        power = GameOrderStatus.fromJson(json["power"]);
+      : date = json["date"],
+        mega = GameOrderStatus.fromJson(json["mega"]),
+        power = GameOrderStatus.fromJson(json["power"]),
+        isComplete = json["isComplete"];
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["date"] = date;
     map["mega"] = mega.toJson();
     map["power"] = power.toJson();
+    map["isComplete"] = isComplete;
     return map;
   }
 
@@ -51,6 +59,13 @@ class GameOrderStatus {
     map["manualOrders"] = manualOrders.map((v) => v.toJson()).toList();
     map["autoOrders"] = autoOrders.map((v) => v.toJson()).toList();
     return map;
+  }
+
+  List<Order> getIssuedAutoOrdersByPlayCnt(int playCnt) {
+    return autoOrders
+        .where((element) =>
+            element.isIssued && element.orderNumbers.length == playCnt)
+        .toList();
   }
 
   int get manualOrdersIssuedCnt =>
@@ -97,9 +112,13 @@ class Order {
       orderNumbers.where((element) => element.flag == 1).length;
 
   int get totalCnt => orderNumbers.length;
+
+  String get ticketImageUrl =>
+      webHost + "/img/lottery/img_${orderNumbers[0].orderId}.jpg";
 }
 
 class Play {
+  String orderId;
   OrderName orderName;
   OrderType orderType;
   String? numbers;
@@ -107,11 +126,12 @@ class Play {
   String buyType;
   int time;
 
-  Play(this.orderName, this.orderType, this.numbers, this.flag, this.buyType,
-      this.time);
+  Play(this.orderId, this.orderName, this.orderType, this.numbers, this.flag,
+      this.buyType, this.time);
 
   Play.fromJson(dynamic json)
-      : orderName = json["orderName"],
+      : orderId = json["orderId"],
+        orderName = json["orderName"],
         orderType = json["orderType"],
         numbers = json["numbers"],
         flag = json["flag"],
@@ -120,6 +140,7 @@ class Play {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["orderId"] = orderId;
     map["orderName"] = orderName;
     map["orderType"] = orderType;
     map["numbers"] = numbers;
@@ -158,7 +179,12 @@ class Play {
   }
 
   List<int> get balls {
-    return numbers?.split(" ").where((element) => element != "").map((e) => int.parse(e)).toList() ?? [];
+    return numbers
+            ?.split(" ")
+            .where((element) => element != "")
+            .map((e) => int.parse(e))
+            .toList() ??
+        [];
   }
 
   List<int> get megaMixedLineBalls {
@@ -168,7 +194,7 @@ class Play {
   }
 
   List<int> get whiteBalls {
-    if( balls.length == 6) {
+    if (balls.length == 6) {
       return balls.sublist(0, 5);
     } else {
       return [];
@@ -176,7 +202,7 @@ class Play {
   }
 
   int get specialBall {
-    if( balls.length == 6) {
+    if (balls.length == 6) {
       return balls.last;
     } else {
       return -1;
