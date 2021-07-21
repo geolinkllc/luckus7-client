@@ -36,7 +36,7 @@ class WebViewController extends GetxController {
         javaScriptCanOpenWindowsAutomatically: true,
         // useShouldOverrideUrlLoading: true,
         userAgent:
-            "${FkUserAgent.userAgent!} Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
+            "${FkUserAgent.userAgent!} Mobile Lucs/${packageInfo.buildNumber} (PushToken ${messagingService.token.value})",
       ),
       ios: IOSInAppWebViewOptions(
         allowsAirPlayForMediaPlayback: false,
@@ -114,11 +114,9 @@ class WebViewController extends GetxController {
       {URLRequest? initialUrlRequest,
       CreateWindowAction? createWindowAction,
       List<Cookie> cookies = const []}) {
-
     final req = createWindowAction != null
         ? createWindowAction.request
         : initialUrlRequest;
-
 
     return InAppWebView(
       key: UniqueKey(),
@@ -139,14 +137,15 @@ class WebViewController extends GetxController {
       onConsoleMessage: onConsoleMessage,
       onCreateWindow: (controller, createWindowRequest) async {
         final url = createWindowRequest.request.url.toString().toLowerCase();
-          print(url);
+        print(url);
         showModalBottomSheet(
           elevation: 8,
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
           builder: (context) => Container(
-            height: MediaQuery.of(context).size.height * (1 - controllers.length * 0.05),
+            height: MediaQuery.of(context).size.height *
+                (1 - controllers.length * 0.05),
             decoration: new BoxDecoration(
               color: Colors.white,
               borderRadius: new BorderRadius.only(
@@ -185,13 +184,12 @@ class WebViewController extends GetxController {
       {URLRequest? initialUrlRequest,
       CreateWindowAction? createWindowAction,
       List<Cookie> cookies = const []}) {
-
     final webview = _createWebView(context,
         initialUrlRequest: initialUrlRequest,
         createWindowAction: createWindowAction,
         cookies: cookies);
 
-    if( Platform.isAndroid) {
+    if (Platform.isAndroid) {
       return WillPopScope(
         onWillPop: onWillPop,
         child: webview,
