@@ -11,6 +11,7 @@ const TicketProcessReadError = "readError";
 const TicketProcessMatchFailed = "matchFailed";
 const TicketProcessAssignError = "assignError";
 const TicketProcessSystemError = "systemError";
+const TicketProcessNetworkError = "networkError";
 const TicketProcessClosed = "closed";
 const TicketProcessInvalidDrawNumber = "invalidDrawNumber";
 const TicketProcessAlreadyAssigned = "alreadyAssigned";
@@ -41,6 +42,8 @@ extension TicketProcessExtention on TicketProcess {
         return "발급완료된복권";
       case TicketProcessInvalidNumber:
         return "유효하지않은번호";
+      case TicketProcessNetworkError:
+        return "네트워크오류";
       default:
         return "";
     }
@@ -65,7 +68,8 @@ class Ticket {
       this.numbers,
       this.drawNumber,
       this.process = TicketProcessProcessing})
-      : drawNumberController = TextEditingController(text: drawNumber?.toString() ?? ""),
+      : drawNumberController =
+            TextEditingController(text: drawNumber?.toString() ?? ""),
         numbersController = TextEditingController(text: numbers);
 
   Ticket.fromJson(dynamic json)
@@ -76,9 +80,9 @@ class Ticket {
         process = json["process"],
         numbers = json["numbers"],
         drawNumber = json["drawNumber"],
-        drawNumberController = TextEditingController(text: "${json["drawNumber"] ?? ''}"),
-        numbersController = TextEditingController(text: json["numbers"])
-  ;
+        drawNumberController =
+            TextEditingController(text: "${json["drawNumber"] ?? ''}"),
+        numbersController = TextEditingController(text: json["numbers"]);
 
   Map<String, dynamic> toJson() {
     final drawNumberText = drawNumberController.text;

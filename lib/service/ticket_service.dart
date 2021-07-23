@@ -62,10 +62,10 @@ class TicketService extends GetxController {
 
   startWatcher(String path) {
     Directory dir;
-    try{
+    try {
       // dir = Directory.fromUri(Uri.parse(path));
       dir = Directory.fromRawPath(Uint8List.fromList(path.codeUnits));
-    }catch(e){
+    } catch (e) {
       debugPrint("startWatcher failed: " + path);
       pref.setString("incomingFolder", "");
       incomingFolder.value = "";
@@ -80,14 +80,15 @@ class TicketService extends GetxController {
     watcher?.events.listen((event) {
       if (event.type == ChangeType.ADD) {
         onFileAdded(event.path);
-      } else if( event.type == ChangeType.REMOVE) {
+      } else if (event.type == ChangeType.REMOVE) {
         onFileRemoved(event.path);
       }
     });
   }
 
   onFileRemoved(String filePath) async {
-    tickets.value = tickets.value..removeWhere((element) => element.filePath == filePath);
+    tickets.value = tickets.value
+      ..removeWhere((element) => element.filePath == filePath);
   }
 
   onFileAdded(String filePath) async {
@@ -117,8 +118,7 @@ class TicketService extends GetxController {
     var formData = FormData.fromMap(json);
 
     try {
-      final res = await apicli
-          .post<dynamic>('/tickets', data: formData);
+      final res = await apicli.post<dynamic>('/tickets', data: formData);
       debugPrint(jsonEncode(res.data));
       final posted = Ticket.fromJson(res.data);
 
@@ -131,14 +131,14 @@ class TicketService extends GetxController {
         modify(posted);
       }
     } on Exception catch (e) {
-      e.printError();
-
+      t.process = TicketProcessSystemError;
+      modify(t);
     }
   }
 
-  modify( Ticket t ){
+  modify(Ticket t) {
     final index =
-    tickets.value.indexWhere((element) => element.filePath == t.filePath);
+        tickets.value.indexWhere((element) => element.filePath == t.filePath);
     final ticketValues = tickets.value;
     ticketValues[index] = t;
     tickets.value = ticketValues;
@@ -155,6 +155,4 @@ class TicketService extends GetxController {
 
     File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits)).deleteSync();
   }
-  
-
 }
