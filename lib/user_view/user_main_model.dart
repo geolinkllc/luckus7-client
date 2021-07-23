@@ -15,7 +15,7 @@ import '../user_app.dart';
 class UserMainModel extends GetxController {
   Dio dio = Get.find();
   PackageInfo packageInfo = Get.find();
-  String get webHost => isDev ? "https://dev.luckus7.com" : "https://luckus7.com";
+  String get webHost => isDev ? "http://dev.luckus7.com" : "https://luckus7.com";
   final apiResponseStream = BehaviorSubject<dynamic>();
 
 
