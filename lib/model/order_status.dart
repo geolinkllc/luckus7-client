@@ -1,4 +1,5 @@
 import 'package:com.cushion.lucs/network/api_client.dart';
+import 'package:flutter/material.dart';
 
 import 'order.dart';
 
@@ -23,6 +24,30 @@ class OrderStatus {
     map["power"] = power.toJson();
     map["isComplete"] = isComplete;
     return map;
+  }
+
+  updateOrder(Order order) {
+    mega.updateOrder(order);
+    power.updateOrder(order);
+  }
+
+  List<Order> getIssuedOrders(
+      OrderName orderName, OrderType orderType, int gamesCnt) {
+    final gameStatus = getGameStatus(orderName);
+
+    if (orderType == OrderTypeManual) {
+      return gameStatus.manualOrders
+          .where((element) =>
+              element.isIssued &&
+              (gamesCnt == 0 || element.orderNumbers.length == gamesCnt))
+          .toList();
+    } else {
+      return gameStatus.autoOrders
+          .where((element) =>
+              element.isIssued &&
+              (gamesCnt == 0 || element.orderNumbers.length == gamesCnt))
+          .toList();
+    }
   }
 
   GameOrderStatus getGameStatus(OrderName orderName) {
@@ -72,6 +97,21 @@ class GameOrderStatus {
       manualOrders.where((element) => element.isIssued).length;
 
   int get manualOrderCnt => manualOrders.length;
+
+  void updateOrder(Order order) {
+    var index = manualOrders.indexWhere((element) =>
+        element.userName == order.userName && element.time == order.time);
+    if (index > -1) {
+      manualOrders[index] = order;
+      return;
+    }
+
+    index = autoOrders.indexWhere((element) =>
+        element.userName == order.userName && element.time == order.time);
+    if (index > -1) {
+      autoOrders[index] = order;
+    }
+  }
 }
 
 class Order {
@@ -79,7 +119,7 @@ class Order {
   String orderName;
   int orderType;
   String userName;
-  List<Play> orderNumbers = [];
+  List<OrderNumber> orderNumbers = [];
 
   Order(this.time, this.orderName, this.orderType, this.userName,
       this.orderNumbers);
@@ -89,8 +129,8 @@ class Order {
         orderName = json["orderName"],
         orderType = json["orderType"],
         userName = json["userName"] {
-    orderNumbers.addAll(
-        (json["orderNumbers"] as List<dynamic>).map((e) => Play.fromJson(e)));
+    orderNumbers.addAll((json["orderNumbers"] as List<dynamic>)
+        .map((e) => OrderNumber.fromJson(e)));
   }
 
   Map<String, dynamic> toJson() {
@@ -117,26 +157,29 @@ class Order {
       webHost + "/img/lottery/img_${orderNumbers[0].orderId}.jpg";
 }
 
-class Play {
+class OrderNumber {
   String orderId;
   OrderName orderName;
   OrderType orderType;
-  String? numbers;
   int flag;
   String buyType;
   int time;
+  TextEditingController numbersController;
 
-  Play(this.orderId, this.orderName, this.orderType, this.numbers, this.flag,
-      this.buyType, this.time);
+  OrderNumber(this.orderId, this.orderName, this.orderType, String numbers,
+      this.flag, this.buyType, this.time)
+      : numbersController = TextEditingController(text: numbers);
 
-  Play.fromJson(dynamic json)
+  OrderNumber.fromJson(dynamic json)
       : orderId = json["orderId"],
         orderName = json["orderName"],
         orderType = json["orderType"],
-        numbers = json["numbers"],
         flag = json["flag"],
         buyType = json["buyType"],
-        time = json["time"];
+        time = json["time"],
+        numbersController = TextEditingController(text: json["numbers"]);
+
+  String get numbers => numbersController.text;
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
@@ -180,11 +223,10 @@ class Play {
 
   List<int> get balls {
     return numbers
-            ?.split(" ")
-            .where((element) => element != "")
-            .map((e) => int.parse(e))
-            .toList() ??
-        [];
+        .split(" ")
+        .where((element) => element != "")
+        .map((e) => int.parse(e))
+        .toList();
   }
 
   List<int> get megaMixedLineBalls {

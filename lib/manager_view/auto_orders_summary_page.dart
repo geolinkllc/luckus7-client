@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:com.cushion.lucs/manager_view/edit_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:com.cushion.lucs/extentions.dart';
@@ -8,7 +9,7 @@ import 'package:com.cushion.lucs/model/order_status.dart';
 import 'package:com.cushion.lucs/service/order_service.dart';
 
 // ignore: must_be_immutable
-class AutoOrdersPage extends StatelessWidget {
+class AutoOrdersSummaryPage extends StatelessWidget {
   OrderService service = Get.find();
 
   @override
@@ -45,19 +46,53 @@ class AutoOrdersPage extends StatelessWidget {
                             label: Text(
                           "줄수",
                           textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 18),
                         )),
                         DataColumn(
-                            label: Text(
-                          "메가",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 16),
+                            label: InkWell(
+                          onTap: () {
+                            service.pauseUpdate();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditOrdersPage(
+                                      OrderNameMega, OrderTypeAuto),
+                                )).then((value) => service.resumeUpdate());
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                "메가",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              SizedBox(width: 4,),
+                              Icon(Icons.edit, size: 16,)
+                            ],
+                          ),
                         )),
                         DataColumn(
-                            label: Text(
-                          "파워볼",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 16),
+                            label: InkWell(
+                          onTap: () {
+                            service.pauseUpdate();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditOrdersPage(
+                                      OrderNamePower, OrderTypeAuto),
+                                )).then((value) => service.resumeUpdate());
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                "파워볼",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              SizedBox(width: 4,),
+                              Icon(Icons.edit, size: 16,)
+                            ],
+                          ),
                         )),
                       ],
                       rows: [for (var i = 0; i < 10; i++) i].map((e) {
@@ -103,32 +138,16 @@ class AutoOrdersPage extends StatelessWidget {
         return;
       }
 
-      print(issuedOrders.map((e) => e.ticketImageUrl).join("\n"));
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Container(
-            height: 800,
-            width: [1400, 400 * issuedOrders.length].reduce(min).toDouble(),
-            padding: EdgeInsets.all(10),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: issuedOrders
-                  .map((e) => e.ticketImageUrl)
-                  .map((e) => Image.network(
-                        e,
-                        width: 400,
-                      ))
-                  .map((e) => Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: e,
-                      ))
-                  .toList(),
+      service.pauseUpdate();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditOrdersPage(
+              orderName,
+              OrderTypeAuto,
+              autoCnt: playCnt,
             ),
-          ),
-        ),
-      );
+          )).then((value) => service.resumeUpdate());
     });
   }
 }

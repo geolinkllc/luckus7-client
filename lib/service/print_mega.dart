@@ -52,7 +52,7 @@ pw.Widget renderMegaOrder(Order order) {
 
   for (int i = plays.length; i < 5; i++) {
     rows.addAll(
-        renderPlay(Play("", OrderNameMega, OrderTypeManual, "", 1, "0", 0)));
+        renderPlay(OrderNumber("", OrderNameMega, OrderTypeManual, "", 1, "0", 0)));
   }
 
   rows.add(pw.TableRow(children: [pw.Container(height: 0.85.cm)]));
@@ -68,7 +68,7 @@ pw.Widget renderMegaOrder(Order order) {
       child: pw.Table(children: rows));
 }
 
-List<pw.TableRow> renderPlay(Play play) {
+List<pw.TableRow> renderPlay(OrderNumber play) {
   final rows = <pw.TableRow>[];
 
   rows.add(renderRow(

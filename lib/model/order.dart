@@ -28,3 +28,14 @@ extension OrderNameExtention on OrderName {
     }
   }
 }
+
+extension OrderTypeExtention on OrderType {
+  String get text {
+    switch (this) {
+      case OrderTypeManual:
+        return "수동";
+      default:
+        return "자동";
+    }
+  }
+}

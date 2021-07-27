@@ -13,6 +13,7 @@ import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watcher/watcher.dart';
+import 'package:com.cushion.lucs/extentions.dart';
 
 import 'order_service.dart';
 
@@ -25,10 +26,12 @@ class TicketService extends GetxController {
 
   // ignore: close_sinks
   final incomingFolder = BehaviorSubject<String>.seeded("");
+  final driveFolder = BehaviorSubject<String>.seeded("");
 
   @override
   void onInit() {
     incomingFolder.value = pref.getString("incomingFolder") ?? "";
+    driveFolder.value = pref.getString("driveFolder") ?? "";
 
     if (incomingFolder.value != "") {
       startWatcher(incomingFolder.value);
@@ -56,6 +59,29 @@ class TicketService extends GetxController {
     if (path != null) {
       incomingFolder.value = path;
       pref.setString("incomingFolder", path);
+      startWatcher(path);
+    }
+  }
+
+  selectDriveDir(BuildContext context) async {
+    var rootPath = "/";
+    if (Platform.isWindows) {
+      rootPath = "file:///C:";
+    }
+
+    final path = await FilesystemPicker.open(
+      rootName: "내 컴퓨터",
+      title: '구글 드라이브 폴더 선택',
+      context: context,
+      rootDirectory: Directory.fromUri(Uri.parse(rootPath)),
+      fsType: FilesystemType.folder,
+      pickText: '처리된 이미지들을 이 폴더로 옮깁니다.',
+      folderIconColor: context.theme.primaryColor,
+    );
+
+    if (path != null) {
+      driveFolder.value = path;
+      pref.setString("driveFolder", path);
       startWatcher(path);
     }
   }
@@ -126,13 +152,31 @@ class TicketService extends GetxController {
         tickets.value = tickets.value
           ..removeWhere((element) => element.filePath == t.filePath);
 
-        File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits)).deleteSync();
+        final file =  File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
+        if( driveFolder.value != "") {
+          moveFile(file, driveFolder.value + pathDelim + (posted.userName ?? "") + "_" + (posted.time ?? 0).toString() + ".jpg");
+        } else {
+          file.deleteSync();
+        }
       } else {
         modify(posted);
       }
     } on Exception catch (e) {
+      printError(info:e.toString());
       t.process = TicketProcessSystemError;
       modify(t);
+    }
+  }
+
+  Future<File> moveFile(File sourceFile, String newPath) async {
+    try {
+      // prefer using rename as it is probably faster
+      return await sourceFile.rename(newPath);
+    } on FileSystemException catch (e) {
+      // if rename fails, copy the source file and then delete it
+      final newFile = await sourceFile.copy(newPath);
+      await sourceFile.delete();
+      return newFile;
     }
   }
 

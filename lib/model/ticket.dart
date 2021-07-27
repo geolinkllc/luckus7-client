@@ -58,6 +58,8 @@ class Ticket {
   TicketProcess process = TicketProcessProcessing;
   String? numbers;
   int? drawNumber;
+  String? userName;
+  int? time;
   TextEditingController drawNumberController;
   TextEditingController numbersController;
 
@@ -67,6 +69,8 @@ class Ticket {
       this.barCode,
       this.numbers,
       this.drawNumber,
+      this.userName,
+      this.time,
       this.process = TicketProcessProcessing})
       : drawNumberController =
             TextEditingController(text: drawNumber?.toString() ?? ""),
@@ -80,6 +84,8 @@ class Ticket {
         process = json["process"],
         numbers = json["numbers"],
         drawNumber = json["drawNumber"],
+        userName = json["userName"],
+        time = json["time"],
         drawNumberController =
             TextEditingController(text: "${json["drawNumber"] ?? ''}"),
         numbersController = TextEditingController(text: json["numbers"]);
@@ -94,6 +100,8 @@ class Ticket {
     map["barCode"] = barCode;
     map["process"] = process;
     map["drawNumber"] = drawNumber;
+    map["userName"] = userName;
+    map["time"] = time;
     map["numbers"] = numbersController.text;
     return map;
   }
