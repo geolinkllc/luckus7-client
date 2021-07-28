@@ -22,6 +22,43 @@ class ManagerMainPage extends StatelessWidget {
   StatelessElement createElement() {
     final elem = super.createElement();
     DesktopWindow.setWindowSize(Size(1920, 1000));
+
+    if (ticketService
+        .filesInScanFolder()
+        .isNotEmpty) {
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        showDialog(context: elem,
+          builder: (context) =>
+              AlertDialog(
+                content: Text("스캔폴더에 이미지 ${ticketService.filesInScanFolder().length} 개가 남아있습니다."),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.red),
+                  onPressed: () {
+                    ticketService.clearScanFolder();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("삭제했습니다."),
+                      duration: const Duration(seconds: 1),
+                    ));
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("삭제"),
+                ),
+                ElevatedButton(
+                  style:
+                  ElevatedButton.styleFrom(
+                      primary: Colors.blue),
+                  onPressed: () {
+                    ticketService.uploadFilesInScanFolder();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("업로드"),
+                )
+              ],),);
+      });
+    }
+
     return elem;
   }
 
@@ -29,7 +66,7 @@ class ManagerMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: StreamBuilder<String?>(
-          stream: ticketService.asyncMessage,
+          stream: ticketService.asyncMessages,
           builder: (context, snapshot) {
             if (snapshot.data != null) {
               WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -38,7 +75,7 @@ class ManagerMainPage extends StatelessWidget {
                   duration: const Duration(seconds: 1),
                 ));
 
-                ticketService.asyncMessage.value = null;
+                ticketService.asyncMessages.value = null;
               });
             }
 
@@ -68,32 +105,35 @@ class ManagerMainPage extends StatelessWidget {
               builder: (context, snapshot) {
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   child: OutlinedButton(
-                      onPressed: () => showDialog(
+                      onPressed: () =>
+                          showDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              content: Text("메시지를 보내시겠습니까?"),
-                              actions: [
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.grey),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("취소"),
+                            builder: (context) =>
+                                AlertDialog(
+                                  content: Text("메시지를 보내시겠습니까?"),
+                                  actions: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.grey),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("취소"),
+                                    ),
+                                    ElevatedButton(
+                                      style:
+                                      ElevatedButton.styleFrom(
+                                          primary: Colors.red),
+                                      onPressed: () {
+                                        ticketService.sendUploadNoti();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("보내기"),
+                                    )
+                                  ],
                                 ),
-                                ElevatedButton(
-                                    style:
-                                    ElevatedButton.styleFrom(primary: Colors.red),
-                                  onPressed: () {
-                                    ticketService.sendUploadNoti();
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("보내기"),
-                                )
-                              ],
-                            ),
                           ),
                       child: Text(
                         "스캔본 업로드 알림 메시지 발송",
@@ -102,11 +142,11 @@ class ManagerMainPage extends StatelessWidget {
                 );
               }),
           StreamBuilder<String>(
-              stream: ticketService.incomingFolder,
+              stream: ticketService.scanFolder,
               builder: (context, snapshot) {
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   child: OutlinedButton(
                       onPressed: () => ticketService.selectIncomingDir(context),
                       child: Text(
@@ -120,11 +160,11 @@ class ManagerMainPage extends StatelessWidget {
               builder: (context, snapshot) {
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   child: OutlinedButton(
                       onPressed: () => ticketService.selectDriveDir(context),
                       child: Text(
-                        "구글드라이브폴더변경(${snapshot.data?.lastPathComponent ?? ""})",
+                        "백업폴더변경(${snapshot.data?.lastPathComponent ?? ""})",
                         style: TextStyle(color: Colors.black54),
                       )),
                 );

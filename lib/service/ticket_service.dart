@@ -22,27 +22,29 @@ class TicketService extends GetxController {
   DirectoryWatcher? watcher;
 
   // ignore: close_sinks
-  final asyncMessage = BehaviorSubject<String?>();
+  final asyncMessages = BehaviorSubject<String?>();
 
   // ignore: close_sinks
   final tickets = BehaviorSubject<List<Ticket>>.seeded([]);
   final pref = Get.find<SharedPreferences>();
+
   // ignore: close_sinks
   final orderName = BehaviorSubject.seeded(OrderNameMega);
+
   // ignore: close_sinks
   final orderType = BehaviorSubject.seeded(OrderTypeAuto);
 
   // ignore: close_sinks
-  final incomingFolder = BehaviorSubject<String>.seeded("");
+  final scanFolder = BehaviorSubject<String>.seeded("");
   final driveFolder = BehaviorSubject<String>.seeded("");
 
   @override
   void onInit() {
-    incomingFolder.value = pref.getString("incomingFolder") ?? "";
+    scanFolder.value = pref.getString("incomingFolder") ?? "";
     driveFolder.value = pref.getString("driveFolder") ?? "";
 
-    if (incomingFolder.value != "") {
-      startWatcher(incomingFolder.value);
+    if (scanFolder.value != "") {
+      startWatcher();
     }
 
     super.onInit();
@@ -65,9 +67,9 @@ class TicketService extends GetxController {
     );
 
     if (path != null) {
-      incomingFolder.value = path;
+      scanFolder.value = path;
       pref.setString("incomingFolder", path);
-      startWatcher(path);
+      startWatcher();
     }
   }
 
@@ -90,25 +92,42 @@ class TicketService extends GetxController {
     if (path != null) {
       driveFolder.value = path;
       pref.setString("driveFolder", path);
-      startWatcher(path);
     }
   }
 
-  startWatcher(String path) {
-    Directory dir;
-    try {
-      // dir = Directory.fromUri(Uri.parse(path));
-      dir = Directory.fromRawPath(Uint8List.fromList(path.codeUnits));
-    } catch (e) {
-      debugPrint("startWatcher failed: " + path);
-      pref.setString("incomingFolder", "");
-      incomingFolder.value = "";
-      return;
-    }
+  List<FileSystemEntity> filesInScanFolder() {
+    return scanDirectory
+            ?.listSync()
+            .where((element) =>
+                element.path.toLowerCase().endsWith("jpg") ||
+                element.path.toLowerCase().endsWith("jpeg") ||
+                element.path.toLowerCase().endsWith("png"))
+            .toList() ??
+        [];
+  }
 
-    dir.listSync().forEach((element) {
+  uploadFilesInScanFolder() {
+    filesInScanFolder().forEach((element) {
       onFileAdded(element.path);
     });
+  }
+
+  clearScanFolder() {
+    filesInScanFolder().forEach((element) {
+      element.delete();
+    });
+  }
+
+  Directory? get scanDirectory => scanFolder.value == ""
+      ? null
+      : Directory.fromRawPath(Uint8List.fromList(scanFolder.value.codeUnits));
+
+  startWatcher() {
+    final path = scanFolder.value;
+
+    if (path == "") {
+      return;
+    }
 
     watcher = DirectoryWatcher(path);
     watcher?.events.listen((event) {
@@ -163,9 +182,16 @@ class TicketService extends GetxController {
         tickets.value = tickets.value
           ..removeWhere((element) => element.filePath == t.filePath);
 
-        final file =  File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
-        if( driveFolder.value != "") {
-          moveFile(file, driveFolder.value + pathDelim + (posted.userName ?? "") + "_" + (posted.time ?? 0).toString() + ".jpg");
+        final file = File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
+        if (driveFolder.value != "") {
+          moveFile(
+              file,
+              driveFolder.value +
+                  pathDelim +
+                  (posted.userName ?? "") +
+                  "_" +
+                  (posted.time ?? 0).toString() +
+                  ".jpg");
         } else {
           file.deleteSync();
         }
@@ -173,7 +199,7 @@ class TicketService extends GetxController {
         modify(posted);
       }
     } on Exception catch (e) {
-      printError(info:e.toString());
+      printError(info: e.toString());
       t.process = TicketProcessSystemError;
       modify(t);
     }
@@ -213,13 +239,12 @@ class TicketService extends GetxController {
 
   sendUploadNoti() async {
     try {
-      final res = await apicli.get<dynamic>(
-          '/orders/status/ticket-upload-noti');
+      final res =
+          await apicli.get<dynamic>('/orders/status/ticket-upload-noti');
       final messageResponse = MessageResponse.fromMap(res.data);
-      asyncMessage.value = messageResponse.message;
+      asyncMessages.value = messageResponse.message;
     } on DioError catch (e) {
-      asyncMessage.value = e.responseMessage;
+      asyncMessages.value = e.responseMessage;
     }
-
   }
 }

@@ -130,32 +130,35 @@ class EditOrdersPage extends StatelessWidget {
                         maxLines: 10,
                       ),
                     ),
-                    SizedBox(height: 8,),
+                    SizedBox(height: 16,),
                     Container(
                       width: 280,
                       child: Column(
                         children: order.orderNumbers
-                            .map((number) => TextField(
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    wordSpacing: 10,
-                                    fontFeatures: [
-                                      FontFeature.tabularFigures()
-                                    ],
+                            .map((number) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: TextField(
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      wordSpacing: 10,
+                                      fontFeatures: [
+                                        FontFeature.tabularFigures()
+                                      ],
+                                    ),
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 8),
+                                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                                      labelText: "번호${order.orderNumbers.indexOf(number)+1}",
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    controller: number.numbersController,
                                   ),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 8),
-                                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                                    labelText: "번호${order.orderNumbers.indexOf(number)+1}",
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  controller: number.numbersController,
-                                ))
+                            ))
                             .toList(),
                       ),
                     ),
