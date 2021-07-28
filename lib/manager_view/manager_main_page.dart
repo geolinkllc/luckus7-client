@@ -12,7 +12,7 @@ import 'package:com.cushion.lucs/extentions.dart';
 
 import 'manual_orders_page.dart';
 
-class MainPage extends StatelessWidget {
+class ManagerMainPage extends StatelessWidget {
   // final pref = Get.find<SharedPreferences>();
   final orderService = Get.find<OrderService>();
   final ticketService = Get.find<TicketService>();
@@ -28,26 +28,79 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: StreamBuilder<String?>(
+          stream: ticketService.asyncMessage,
+          builder: (context, snapshot) {
+            if (snapshot.data != null) {
+              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(snapshot.data!),
+                  duration: const Duration(seconds: 1),
+                ));
+
+                ticketService.asyncMessage.value = null;
+              });
+            }
+
+            return Container();
+          }),
       appBar: AppBar(
-/*
-        leading: IconButton(
-          icon: Icon(Icons.refresh_rounded),
-          onPressed: () => orderService.loadOrderStatus(forceRefresh: true),
-        ),
-*/
         elevation: 1,
         centerTitle: true,
         title: StreamBuilder<OrderStatus?>(
             stream: orderService.status,
             builder: (context, snapshot) {
-              return Text(
-                (snapshot.data?.date ?? "") +
-                    " 발권" +
-                    (snapshot.data?.isComplete == true ? " 완료" : ""),
-                style: TextStyle(fontSize: 24),
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    (snapshot.data?.date ?? "") +
+                        " 발권" +
+                        (snapshot.data?.isComplete == true ? " 완료" : ""),
+                    style: TextStyle(fontSize: 24),
+                  ),
+                ],
               );
             }),
         actions: [
+          StreamBuilder<OrderStatus?>(
+              stream: orderService.status,
+              builder: (context, snapshot) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  child: OutlinedButton(
+                      onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: Text("메시지를 보내시겠습니까?"),
+                              actions: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.grey),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("취소"),
+                                ),
+                                ElevatedButton(
+                                    style:
+                                    ElevatedButton.styleFrom(primary: Colors.red),
+                                  onPressed: () {
+                                    ticketService.sendUploadNoti();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("보내기"),
+                                )
+                              ],
+                            ),
+                          ),
+                      child: Text(
+                        "스캔본 업로드 알림 메시지 발송",
+                        style: TextStyle(color: Colors.black54),
+                      )),
+                );
+              }),
           StreamBuilder<String>(
               stream: ticketService.incomingFolder,
               builder: (context, snapshot) {

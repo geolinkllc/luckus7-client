@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'network/api_client.dart';
 import 'service/order_service.dart';
-import 'manager_view/main_page.dart';
+import 'manager_view/manager_main_page.dart';
 import 'service/ticket_print_service.dart';
 import 'service/ticket_service.dart';
 
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
             // enabledBorder: OutlineInputBorder(
             //     borderSide: BorderSide(color:Theme.of(context).dividerColor)),
           )),
-      home: MainPage(),
+      home: ManagerMainPage(),
     );
   }
 }

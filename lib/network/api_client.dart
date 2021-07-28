@@ -23,3 +23,4 @@ class ApiClient{
 String get webHost => isDev ? "https://dev.luckus7.com" : "https://luckus7.com";
 String get apiHost => webHost + "/api";
 Dio get apicli => Get.find<Dio>();
+

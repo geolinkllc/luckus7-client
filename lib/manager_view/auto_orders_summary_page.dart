@@ -66,8 +66,13 @@ class AutoOrdersSummaryPage extends StatelessWidget {
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontSize: 18),
                               ),
-                              SizedBox(width: 4,),
-                              Icon(Icons.edit, size: 16,)
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.edit,
+                                size: 16,
+                              )
                             ],
                           ),
                         )),
@@ -89,8 +94,13 @@ class AutoOrdersSummaryPage extends StatelessWidget {
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontSize: 18),
                               ),
-                              SizedBox(width: 4,),
-                              Icon(Icons.edit, size: 16,)
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.edit,
+                                size: 16,
+                              )
                             ],
                           ),
                         )),
@@ -133,11 +143,6 @@ class AutoOrdersSummaryPage extends StatelessWidget {
                 color: orderCnt.totalCnt == 0 ? Colors.grey : null),
           ),
         ), onTap: () {
-      final issuedOrders = gameStatus.getIssuedAutoOrdersByPlayCnt(playCnt);
-      if (issuedOrders.isEmpty) {
-        return;
-      }
-
       service.pauseUpdate();
       Navigator.push(
           context,

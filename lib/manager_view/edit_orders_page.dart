@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:com.cushion.lucs/model/order_status.dart';
 import 'package:com.cushion.lucs/service/order_service.dart';
+import 'package:com.cushion.lucs/view/always_disabled_focus_node.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -76,7 +77,7 @@ class EditOrdersPage extends StatelessWidget {
                         child: Container(
                           width: double.infinity,
                           child: Text(
-                            "주문이 없습니다",
+                            "발권완료된 주문이 없습니다",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),
@@ -102,70 +103,89 @@ class EditOrdersPage extends StatelessWidget {
                 width: 300,
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
+                    Container(
+                      width:280,
+                      child: TextField(
+                        focusNode: AlwaysDisabledFocusNode(),
+                        readOnly: true,
+                        controller: TextEditingController(text: order.userName),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          wordSpacing: 10,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(
+                                left: 16, right: 16, top: 16, bottom: 8),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelText: "유저아아디"),
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 10,
+                      ),
+                    ),
+                    SizedBox(height: 8,),
+                    Container(
+                      width: 280,
+                      child: Column(
+                        children: order.orderNumbers
+                            .map((number) => TextField(
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    wordSpacing: 10,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures()
+                                    ],
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 8),
+                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    labelText: "번호${order.orderNumbers.indexOf(number)+1}",
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  controller: number.numbersController,
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 270,
-                          child: Column(
-                            children: order.orderNumbers
-                                .map((number) => TextField(
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        wordSpacing: 10,
-                                        fontFeatures: [
-                                          FontFeature.tabularFigures()
-                                        ],
-                                      ),
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top: 16,
-                                            bottom: 8),
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                      controller: number.numbersController,
-                                    ))
-                                .toList(),
-                          ),
+                        SizedBox(
+                          width: 130,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                service.updateOrder(order);
+                              },
+                              child: Text("수정")),
                         ),
                         SizedBox(
-                          height: 4,
+                          width: 4,
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: 130,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    service.updateOrder(order);
-                                  },
-                                  child: Text("수정")),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            SizedBox(
-                              width: 130,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  service.cancelUpload(order);
-                                },
-                                child: Text("업로드취소"),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.red),
-                              ),
-                            ),
-                          ],
+                        SizedBox(
+                          width: 130,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              service.cancelUpload(order);
+                            },
+                            child: Text("업로드취소"),
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.red),
+                          ),
                         ),
                       ],
                     )

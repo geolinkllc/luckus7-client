@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:com.cushion.lucs/model/ticket.dart';
 import 'package:com.cushion.lucs/model/order.dart';
 import 'package:com.cushion.lucs/network/api_client.dart';
+import 'package:com.cushion.lucs/network/message_response.dart';
 import 'package:dio/dio.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,8 +22,15 @@ class TicketService extends GetxController {
   DirectoryWatcher? watcher;
 
   // ignore: close_sinks
+  final asyncMessage = BehaviorSubject<String?>();
+
+  // ignore: close_sinks
   final tickets = BehaviorSubject<List<Ticket>>.seeded([]);
   final pref = Get.find<SharedPreferences>();
+  // ignore: close_sinks
+  final orderName = BehaviorSubject.seeded(OrderNameMega);
+  // ignore: close_sinks
+  final orderType = BehaviorSubject.seeded(OrderTypeAuto);
 
   // ignore: close_sinks
   final incomingFolder = BehaviorSubject<String>.seeded("");
@@ -130,8 +138,9 @@ class TicketService extends GetxController {
     await post(ticket);
   }
 
-  post(Ticket t) async {
+  post(Ticket t, {bool isCompanyOrder = false}) async {
     t.process = TicketProcessProcessing;
+    t.orderName = orderName.value;
     modify(t);
 
     final pathDelim = Platform.isWindows ? "\\" : "/";
@@ -140,6 +149,8 @@ class TicketService extends GetxController {
     print(json);
     json["file"] = await MultipartFile.fromFile(t.filePath,
         filename: t.filePath.split(pathDelim).last);
+    json["orderType"] = orderType.value;
+    json["isCompanyOrder"] = isCompanyOrder;
 
     var formData = FormData.fromMap(json);
 
@@ -198,5 +209,17 @@ class TicketService extends GetxController {
       ..removeWhere((element) => element.filePath == t.filePath);
 
     File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits)).deleteSync();
+  }
+
+  sendUploadNoti() async {
+    try {
+      final res = await apicli.get<dynamic>(
+          '/orders/status/ticket-upload-noti');
+      final messageResponse = MessageResponse.fromMap(res.data);
+      asyncMessage.value = messageResponse.message;
+    } on DioError catch (e) {
+      asyncMessage.value = e.responseMessage;
+    }
+
   }
 }

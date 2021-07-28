@@ -16,6 +16,7 @@ const TicketProcessClosed = "closed";
 const TicketProcessInvalidDrawNumber = "invalidDrawNumber";
 const TicketProcessAlreadyAssigned = "alreadyAssigned";
 const TicketProcessInvalidNumber = "invalidNumber";
+const TicketProcessCompanyOrderError = "companyOrderError";
 
 extension TicketProcessExtention on TicketProcess {
   String get text {
@@ -44,6 +45,8 @@ extension TicketProcessExtention on TicketProcess {
         return "유효하지않은번호";
       case TicketProcessNetworkError:
         return "네트워크오류";
+      case TicketProcessCompanyOrderError:
+        return "회사주문생성오류";
       default:
         return "";
     }

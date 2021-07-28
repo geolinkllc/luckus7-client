@@ -17,18 +17,79 @@ class TicketsPage extends StatelessWidget {
   Widget build(BuildContext context) => StreamBuilder<List<Ticket>>(
       stream: service.tickets,
       builder: (context, snapshot) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 800),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.start,
-              runAlignment: WrapAlignment.start,
-              alignment: WrapAlignment.start,
-              verticalDirection: VerticalDirection.down,
-              children:
-                  (snapshot.data ?? []).map((e) => ticketView(e)).toList(),
+        return Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            StreamBuilder<OrderType>(
+              stream: service.orderType,
+              builder: (context, orderTypeSnap) => StreamBuilder<OrderName>(
+                  stream: service.orderName,
+                  builder: (context, orderNameSnap) {
+                    return Container(
+                      height: 52,
+                      width: double.infinity,
+                      color: Colors.black12,
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "업로드",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 24),
+                          ),
+                          SizedBox(width: 48,),
+                          Radio(
+                            value: OrderNameMega,
+                            groupValue: orderNameSnap.data,
+                            onChanged: (value) {
+                              service.orderName.value = OrderNameMega;
+                            },
+                          ),
+                          Text("메가", style: TextStyle(fontSize: 18)),
+                          SizedBox(width: 4,),
+                          Radio(
+                            value: OrderNamePower,
+                            groupValue: orderNameSnap.data,
+                            onChanged: (value) {
+                              service.orderName.value = OrderNamePower;
+                            },
+                          ),
+                          Text("파워", style: TextStyle(fontSize: 18)),
+                          SizedBox(width: 48,),
+                          Radio(
+                            value: OrderTypeAuto,
+                            groupValue: orderTypeSnap.data,
+                            onChanged: (value) {
+                              service.orderType.value = OrderTypeAuto;
+                            },
+                          ),
+                          Text("자동", style: TextStyle(fontSize: 18)),
+                          SizedBox(width: 4,),
+                          Radio(
+                            value: OrderTypeManual,
+                            groupValue: orderTypeSnap.data,
+                            onChanged: (value) {
+                              service.orderType.value = OrderTypeManual;
+                            },
+                          ),
+                          Text("수동", style: TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                    );
+                  }),
             ),
-          ),
+            SingleChildScrollView(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.start,
+                runAlignment: WrapAlignment.start,
+                alignment: WrapAlignment.start,
+                verticalDirection: VerticalDirection.down,
+                children:
+                    (snapshot.data ?? []).map((e) => ticketView(e)).toList(),
+              ),
+            ),
+          ],
         );
       });
 
@@ -144,7 +205,7 @@ class TicketsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               SizedBox(
-                                width: 130,
+                                width: 84,
                                 child: ElevatedButton(
                                     onPressed: () {
                                       service.post(t);
@@ -155,7 +216,7 @@ class TicketsPage extends StatelessWidget {
                                 width: 4,
                               ),
                               SizedBox(
-                                width: 130,
+                                width: 84,
                                 child: ElevatedButton(
                                   onPressed: () {
                                     service.delete(t);
@@ -164,6 +225,20 @@ class TicketsPage extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                       primary: Colors.red),
                                 ),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              SizedBox(
+                                width: 84,
+
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.grey),
+                                    onPressed: () {
+                                      service.post(t, isCompanyOrder: true);
+                                    },
+                                    child: Text("회사잔여분")),
                               ),
                             ],
                           ),
