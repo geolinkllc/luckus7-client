@@ -43,7 +43,7 @@ class OrderService extends GetxController {
 
   Future<void> updateOrder(Order order) async {
     try {
-      final res = await apicli.put<dynamic>(
+      final res = await apicli.post<dynamic>(
           '/order-groups/${order.userName}-${order.time}',
           data: order.toJson());
       final updated = Order.fromJson(res.data);
@@ -56,8 +56,8 @@ class OrderService extends GetxController {
 
   Future<void> cancelUpload(Order order) async {
     try {
-      final res = await apicli.delete<dynamic>(
-          '/order-groups/${order.userName}-${order.time}/ticket');
+      final res = await apicli.get<dynamic>(
+          '/order-groups/${order.userName}-${order.time}/remove-ticket');
       final updated = Order.fromJson(res.data);
       status.value = status.value?..updateOrder(updated);
       message.value = "취소했습니다.";
