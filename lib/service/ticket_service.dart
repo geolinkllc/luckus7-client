@@ -38,6 +38,8 @@ class TicketService extends GetxController {
   final scanFolder = BehaviorSubject<String>.seeded("");
   final driveFolder = BehaviorSubject<String>.seeded("");
 
+  final extraOrderUserIdController = TextEditingController();
+
   @override
   void onInit() {
     scanFolder.value = pref.getString("incomingFolder") ?? "";
@@ -157,7 +159,7 @@ class TicketService extends GetxController {
     await post(ticket);
   }
 
-  post(Ticket t, {bool isCompanyOrder = false}) async {
+  post(Ticket t, {String? extraOrderUserId}) async {
     t.process = TicketProcessProcessing;
     t.orderName = orderName.value;
     modify(t);
@@ -169,7 +171,7 @@ class TicketService extends GetxController {
     json["file"] = await MultipartFile.fromFile(t.filePath,
         filename: t.filePath.split(pathDelim).last);
     json["orderType"] = orderType.value;
-    json["isCompanyOrder"] = isCompanyOrder;
+    json["extraOrderUserId"] = extraOrderUserId;
 
     var formData = FormData.fromMap(json);
 
@@ -183,22 +185,31 @@ class TicketService extends GetxController {
           ..removeWhere((element) => element.filePath == t.filePath);
 
         final file = File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
+        final dirString = driveFolder.value +
+            pathDelim +
+            DateTime.now().format("yyyy-MM-dd") +
+            pathDelim +
+            posted.orderName! +
+            "_" +
+            orderType.value.engText;
+        final dir =
+            Directory.fromRawPath(Uint8List.fromList(dirString.codeUnits));
+
+        dir.createSync(recursive: true);
+
         if (driveFolder.value != "") {
           moveFile(
               file,
-              driveFolder.value +
+              dir.path +
                   pathDelim +
-                  (posted.userName ?? "") +
-                  "_" +
-                  (posted.time ?? 0).toString() +
-                  ".jpg");
+                  "${posted.userName ?? ""}_${posted.time ?? DateTime.now().millisecondsSinceEpoch}.jpg");
         } else {
           file.deleteSync();
         }
       } else {
         modify(posted);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       printError(info: e.toString());
       t.process = TicketProcessSystemError;
       modify(t);
@@ -246,5 +257,15 @@ class TicketService extends GetxController {
     } on DioError catch (e) {
       asyncMessages.value = e.responseMessage;
     }
+  }
+
+  bool registerExtraOrder(Ticket t) {
+    if( extraOrderUserIdController.text.trim().length < 10) {
+      asyncMessages.add("고객 아이디를 입력하세요");
+      return false;
+    }
+
+    post(t, extraOrderUserId: extraOrderUserIdController.text);
+    return true;
   }
 }

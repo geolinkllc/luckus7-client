@@ -38,7 +38,9 @@ class TicketsPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),
-                          SizedBox(width: 48,),
+                          SizedBox(
+                            width: 48,
+                          ),
                           Radio(
                             value: OrderNameMega,
                             groupValue: orderNameSnap.data,
@@ -47,7 +49,9 @@ class TicketsPage extends StatelessWidget {
                             },
                           ),
                           Text("메가", style: TextStyle(fontSize: 18)),
-                          SizedBox(width: 4,),
+                          SizedBox(
+                            width: 4,
+                          ),
                           Radio(
                             value: OrderNamePower,
                             groupValue: orderNameSnap.data,
@@ -56,7 +60,9 @@ class TicketsPage extends StatelessWidget {
                             },
                           ),
                           Text("파워", style: TextStyle(fontSize: 18)),
-                          SizedBox(width: 48,),
+                          SizedBox(
+                            width: 48,
+                          ),
                           Radio(
                             value: OrderTypeAuto,
                             groupValue: orderTypeSnap.data,
@@ -65,7 +71,9 @@ class TicketsPage extends StatelessWidget {
                             },
                           ),
                           Text("자동", style: TextStyle(fontSize: 18)),
-                          SizedBox(width: 4,),
+                          SizedBox(
+                            width: 4,
+                          ),
                           Radio(
                             value: OrderTypeManual,
                             groupValue: orderTypeSnap.data,
@@ -85,15 +93,16 @@ class TicketsPage extends StatelessWidget {
                 runAlignment: WrapAlignment.start,
                 alignment: WrapAlignment.start,
                 verticalDirection: VerticalDirection.down,
-                children:
-                    (snapshot.data ?? []).map((e) => ticketView(e)).toList(),
+                children: (snapshot.data ?? [])
+                    .map((e) => ticketView(context, e))
+                    .toList(),
               ),
             ),
           ],
         );
       });
 
-  Widget ticketView(Ticket t) {
+  Widget ticketView(BuildContext context, Ticket t) {
     return Card(
       child: Stack(
         alignment: Alignment.center,
@@ -201,45 +210,65 @@ class TicketsPage extends StatelessWidget {
                           SizedBox(
                             height: 4,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
+                          Column(
                             children: [
-                              SizedBox(
-                                width: 84,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      service.post(t);
-                                    },
-                                    child: Text("재시도")),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 130,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          service.post(t);
+                                        },
+                                        child: Text("재시도")),
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  SizedBox(
+                                    width: 130,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        service.delete(t);
+                                      },
+                                      child: Text("삭제"),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.red),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              SizedBox(
-                                width: 84,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    service.delete(t);
-                                  },
-                                  child: Text("삭제"),
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.red),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              SizedBox(
-                                width: 84,
-
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.grey),
-                                    onPressed: () {
-                                      service.post(t, isCompanyOrder: true);
-                                    },
-                                    child: Text("회사잔여분")),
-                              ),
+                              SizedBox(height:4),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 130,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.grey),
+                                        onPressed: () {
+                                          service.extraOrderUserIdController.text = "01082120017";
+                                          service.registerExtraOrder(t);
+                                        },
+                                        child: Text("회사잔여분할당")),
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  SizedBox(
+                                    width: 130,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.grey),
+                                        onPressed: () {
+                                          showCreateExtraOrderDialog(context, t);
+                                        },
+                                        child: Text("여분주문생성")),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ],
@@ -257,6 +286,54 @@ class TicketsPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  showCreateExtraOrderDialog(BuildContext context, Ticket t) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("잔여복권 주문등록"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("잔여복권을 할당할 회원 아이디를 입력하세요"),
+            SizedBox(height:16),
+            TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              autofocus: true,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 18,
+              ),
+              decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: "회원 아아디"),
+              keyboardType: TextInputType.phone,
+              controller: service.extraOrderUserIdController,
+            )
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: Colors.red),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("취소"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: Colors.blue),
+            onPressed: () {
+              if(service.registerExtraOrder( t))
+                Navigator.of(context).pop();
+            },
+            child: Text("등록"),
+          ),
         ],
       ),
     );

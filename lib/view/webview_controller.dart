@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WebViewController extends GetxController {
   PackageInfo packageInfo = Get.find();
@@ -46,7 +48,7 @@ class WebViewController extends GetxController {
       ),
       android: AndroidInAppWebViewOptions(
         builtInZoomControls: false,
-        useHybridComposition: false,
+        useHybridComposition: true,
         supportMultipleWindows: true,
         domStorageEnabled: true,
         mixedContentMode: AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
@@ -92,6 +94,16 @@ class WebViewController extends GetxController {
 
   onLoadStop(InAppWebViewController controller, Uri? url) async {
     // print("onLoadStop: " + (url?.toString() ?? ""));
+    // if( url?.host == "wj3e2.channel.io") {
+    //   // Navigator.of(context).pop();
+    //   canLaunch(url.toString()).then((value) {
+    //     if( value ) {
+    //       launch(url.toString());
+    //     }
+    //   }).then((value) {
+    //     controller.evaluateJavascript(source: "window.close()");
+    //   });
+    // }
   }
 
   Future<bool> onWillPop() async {
@@ -128,6 +140,7 @@ class WebViewController extends GetxController {
       onWebViewCreated: (controller) {
         controllers.add(controller);
       },
+
       onJsAlert: (controller, jsAlertRequest) {
         return Future.value(JsAlertResponse());
       },
@@ -158,14 +171,26 @@ class WebViewController extends GetxController {
                 child: createWebView(context,
                     createWindowAction: createWindowRequest)),
           ),
-        );
+        ).then((value) {
+          if( currentController != rootController)
+            controllers.remove(currentController);
+          return null;
+        });
         return true;
       },
       onCloseWindow: (controller) {
         Navigator.of(context).pop();
       },
-      onLoadStart: (controller, url) {
-        // print("onLoadStart: " + url.toString());
+      onLoadStart: (controller, url) async {
+        print("onLoadStart: " + url.toString());
+        if( (url?.host.endsWith("channel.io") == true ||
+            url?.host.endsWith("ftc.go.kr") == true)   && controllers.contains(controller)) {
+          controllers.remove(controller);
+          if( await canLaunch(url.toString())){
+            launch(url.toString());
+          }
+          Future.delayed(Duration(milliseconds: 300)).then((value) => controller.evaluateJavascript(source: "window.close();"));
+        }
       },
       shouldInterceptFetchRequest: (controller, fetchRequest) {
         print("shouldInterceptFetchRequest");

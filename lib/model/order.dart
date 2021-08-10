@@ -38,4 +38,13 @@ extension OrderTypeExtention on OrderType {
         return "자동";
     }
   }
+
+  String get engText {
+    switch (this) {
+      case OrderTypeManual:
+        return "manual";
+      default:
+        return "auto";
+    }
+  }
 }

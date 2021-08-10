@@ -70,7 +70,7 @@ packages:
       name: build
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.0"
   build_config:
     dependency: transitive
     description:
@@ -98,14 +98,14 @@ packages:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.4"
+    version: "2.1.1"
   build_runner_core:
     dependency: transitive
     description:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0"
+    version: "7.1.0"
   built_collection:
     dependency: transitive
     description:
@@ -334,7 +334,7 @@ packages:
       name: flutter_animation_progress_bar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   flutter_inappwebview:
     dependency: "direct main"
     description:
@@ -386,7 +386,7 @@ packages:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.1+2"
+    version: "4.3.6"
   glob:
     dependency: transitive
     description:
