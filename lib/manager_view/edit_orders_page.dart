@@ -124,7 +124,7 @@ class EditOrdersPage extends StatelessWidget {
                             contentPadding: EdgeInsets.only(
                                 left: 16, right: 16, top: 16, bottom: 8),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            labelText: "유저아아디"),
+                            labelText: "유저아이디"),
                         keyboardType: TextInputType.multiline,
                         minLines: 1,
                         maxLines: 10,

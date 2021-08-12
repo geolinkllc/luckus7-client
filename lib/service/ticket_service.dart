@@ -40,6 +40,8 @@ class TicketService extends GetxController {
 
   final extraOrderUserIdController = TextEditingController();
 
+  final pathDelim = Platform.isWindows ? "\\" : "/";
+
   @override
   void onInit() {
     scanFolder.value = pref.getString("incomingFolder") ?? "";
@@ -164,8 +166,6 @@ class TicketService extends GetxController {
     t.orderName = orderName.value;
     modify(t);
 
-    final pathDelim = Platform.isWindows ? "\\" : "/";
-
     var json = t.toJson();
     print(json);
     json["file"] = await MultipartFile.fromFile(t.filePath,
@@ -208,6 +208,10 @@ class TicketService extends GetxController {
         }
       } else {
         modify(posted);
+
+        if( posted.process == TicketProcessReadError || posted.process == TicketProcessReadFailed) {
+
+        }
       }
     } catch (e) {
       printError(info: e.toString());
@@ -260,12 +264,46 @@ class TicketService extends GetxController {
   }
 
   bool registerExtraOrder(Ticket t) {
-    if( extraOrderUserIdController.text.trim().length < 10) {
+    if (extraOrderUserIdController.text.trim().length < 10) {
       asyncMessages.add("고객 아이디를 입력하세요");
       return false;
     }
 
     post(t, extraOrderUserId: extraOrderUserIdController.text);
     return true;
+  }
+
+/*
+  moveTicketTo(Ticket t, List<String> driveRelativePath){
+    final dirString = driveFolder.value + pathDelim + driveRelativePath.join(pathDelim);
+    final dir = File.fromRawPath(Uint8List.fromList(dirString.codeUnits));
+
+    try {
+      // prefer using rename as it is probably faster
+      return await sourceFile.rename(newPath);
+    } on FileSystemException catch (e) {
+      // if rename fails, copy the source file and then delete it
+      final newFile = await sourceFile.copy(newPath);
+      await sourceFile.delete();
+      return newFile;
+    }
+  }
+*/
+
+  void backupRemainTickets() {
+    final dirString = driveFolder.value +
+        pathDelim +
+        DateTime.now().format("yyyy-MM-dd") +
+        pathDelim +
+        "remains";
+    final dir = Directory.fromRawPath(Uint8List.fromList(dirString.codeUnits));
+
+    dir.createSync(recursive: true);
+
+    tickets.value
+        .map((e) => File.fromRawPath(Uint8List.fromList(e.filePath.codeUnits)))
+        .forEach((file) {
+      moveFile(file, dir.path + pathDelim + file.path.lastPathComponent);
+    });
   }
 }

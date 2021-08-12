@@ -40,13 +40,13 @@ class OrderStatus {
           .where((element) =>
               element.isIssued &&
               (gamesCnt == 0 || element.orderNumbers.length == gamesCnt))
-          .toList();
+          .toList()..sort((a,b)=>a.totalCnt - b.totalCnt);
     } else {
       return gameStatus.autoOrders
           .where((element) =>
               element.isIssued &&
               (gamesCnt == 0 || element.orderNumbers.length == gamesCnt))
-          .toList();
+          .toList()..sort((a,b)=>a.totalCnt - b.totalCnt);
     }
   }
 

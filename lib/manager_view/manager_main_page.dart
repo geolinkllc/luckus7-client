@@ -1,4 +1,5 @@
 import 'package:com.cushion.lucs/model/order_status.dart';
+import 'package:com.cushion.lucs/model/ticket.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,35 +28,38 @@ class ManagerMainPage extends StatelessWidget {
         .filesInScanFolder()
         .isNotEmpty) {
       WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-        showDialog(context: elem,
+        showDialog(
+          context: elem,
           builder: (context) =>
               AlertDialog(
-                content: Text("스캔폴더에 이미지 ${ticketService.filesInScanFolder().length} 개가 남아있습니다."),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.red),
-                  onPressed: () {
-                    ticketService.clearScanFolder();
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("삭제했습니다."),
-                      duration: const Duration(seconds: 1),
-                    ));
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("삭제"),
-                ),
-                ElevatedButton(
-                  style:
-                  ElevatedButton.styleFrom(
-                      primary: Colors.blue),
-                  onPressed: () {
-                    ticketService.uploadFilesInScanFolder();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("업로드"),
-                )
-              ],),);
+                content: Text(
+                    "스캔폴더에 이미지 ${ticketService
+                        .filesInScanFolder()
+                        .length} 개가 남아있습니다."),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.red),
+                    onPressed: () {
+                      ticketService.clearScanFolder();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("삭제했습니다."),
+                        duration: const Duration(seconds: 1),
+                      ));
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("삭제"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.blue),
+                    onPressed: () {
+                      ticketService.uploadFilesInScanFolder();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("업로드"),
+                  )
+                ],
+              ),
+        );
       });
     }
 
@@ -99,6 +103,47 @@ class ManagerMainPage extends StatelessWidget {
                 ],
               );
             }),
+        leadingWidth: 600,
+        leading: Row(
+          children: [
+            StreamBuilder<String>(
+                stream: ticketService.scanFolder,
+                builder: (context, snapshot) {
+                  return Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                    child: SizedBox(
+                      height: 40,
+                      child: OutlinedButton(
+                          onPressed: () =>
+                              ticketService.selectIncomingDir(context),
+                          child: Text(
+                            "스캔폴더변경(${snapshot.data?.lastPathComponent ?? ""})",
+                            style: TextStyle(color: Colors.black54),
+                          )),
+                    ),
+                  );
+                }),
+            StreamBuilder<String>(
+                stream: ticketService.driveFolder,
+                builder: (context, snapshot) {
+                  return Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                    child: SizedBox(
+                      height: 40,
+                      child: OutlinedButton(
+                          onPressed: () =>
+                              ticketService.selectDriveDir(context),
+                          child: Text(
+                            "백업폴더변경(${snapshot.data ?? ""})",
+                            style: TextStyle(color: Colors.black54),
+                          )),
+                    ),
+                  );
+                }),
+          ],
+        ),
         actions: [
           StreamBuilder<OrderStatus?>(
               stream: orderService.status,
@@ -123,8 +168,7 @@ class ManagerMainPage extends StatelessWidget {
                                       child: Text("취소"),
                                     ),
                                     ElevatedButton(
-                                      style:
-                                      ElevatedButton.styleFrom(
+                                      style: ElevatedButton.styleFrom(
                                           primary: Colors.red),
                                       onPressed: () {
                                         ticketService.sendUploadNoti();
@@ -142,33 +186,26 @@ class ManagerMainPage extends StatelessWidget {
                 );
               }),
           StreamBuilder<String>(
-              stream: ticketService.scanFolder,
-              builder: (context, snapshot) {
-                return Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                  child: OutlinedButton(
-                      onPressed: () => ticketService.selectIncomingDir(context),
-                      child: Text(
-                        "스캔폴더변경(${snapshot.data?.lastPathComponent ?? ""})",
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                );
-              }),
-          StreamBuilder<String>(
-              stream: ticketService.driveFolder,
-              builder: (context, snapshot) {
-                return Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                  child: OutlinedButton(
-                      onPressed: () => ticketService.selectDriveDir(context),
-                      child: Text(
-                        "백업폴더변경(${snapshot.data?.lastPathComponent ?? ""})",
-                        style: TextStyle(color: Colors.black54),
-                      )),
-                );
-              }),
+            stream: ticketService.driveFolder,
+            builder: (context, drivePathSnap) =>
+                StreamBuilder<List<Ticket>>(
+                    stream: ticketService.tickets,
+                    builder: (context, ticketsSnap) {
+                      return Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                        child: OutlinedButton(
+                            onPressed: () =>
+                                openBackupDialog(
+                                    context, drivePathSnap, ticketsSnap),
+                            child: Text(
+                              "잔여티켓백업",
+                              style: TextStyle(color: Colors.black54),
+                            )),
+                      );
+                    }),
+          ),
+
 /*
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -214,6 +251,82 @@ class ManagerMainPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  openBackupDialog(BuildContext context, AsyncSnapshot<String> drivePathSnap,
+      AsyncSnapshot<List<Ticket>> ticketsSnap) {
+    if ((drivePathSnap.data ?? "") == "") {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              content: Text(
+                  "백업폴더를 선택해주세요"),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.grey),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("닫기"),
+                )
+              ],
+            ),
+      );
+
+      return;
+    }
+
+    if ((ticketsSnap.data?.length ?? 0) == 0) {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              content: Text(
+                  "잔여티켓이 없습니다."),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.grey),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("닫기"),
+                )
+              ],
+            ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) =>
+          AlertDialog(
+            content: Text(
+                "잔여티켓 ${ticketsSnap.data?.length ?? 0}장을 백업폴더로 옮길까요?"),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.grey),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("취소"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.blue),
+                onPressed: () {
+                  ticketService.backupRemainTickets();
+                  Navigator.of(context).pop();
+                },
+                child: Text("백업하기"),
+              )
+            ],
+          ),
     );
   }
 }
