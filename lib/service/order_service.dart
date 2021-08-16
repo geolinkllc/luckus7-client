@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:com.cushion.lucs/model/order_status.dart';
 import 'package:com.cushion.lucs/network/api_client.dart';
@@ -9,8 +11,13 @@ import 'package:rxdart/rxdart.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:com.cushion.lucs/extentions.dart';
+import 'package:com.cushion.lucs/model/order.dart';
+
+import 'ticket_service.dart';
 
 class OrderService extends GetxController {
+  late TicketService ticketService = Get.find();
+
   // ignore: close_sinks
   final status = BehaviorSubject<OrderStatus?>();
 
@@ -49,6 +56,17 @@ class OrderService extends GetxController {
       final updated = Order.fromJson(res.data);
       status.value = status.value?..updateOrder(updated);
       message.value = "수정했습니다.";
+
+      final newPath = ticketService.driveFolder.value +
+          pathDelim +
+          DateTime.now().format("yyyy-MM-dd") +
+          pathDelim +
+          "misread" +
+          pathDelim +
+          "${order.userName}_${order.time}.jpg";
+
+      GetOrderTicketBackupFile(updated)?.copy(newPath);
+
     } on DioError catch (e) {
       message.value = e.responseMessage;
     }
@@ -64,5 +82,25 @@ class OrderService extends GetxController {
     } on DioError catch (e) {
       message.value = e.responseMessage;
     }
+  }
+
+  File? GetOrderTicketBackupFile(Order order) {
+    if (!order.isIssued) {
+      return null;
+    }
+
+    if (ticketService.driveFolder.value == "") {
+      return null;
+    }
+
+    final path = ticketService.driveFolder.value +
+        pathDelim +
+        DateTime.now().format("yyyy-MM-dd") +
+        pathDelim +
+        "${order.orderName}_${order.orderType.engText}" +
+        pathDelim +
+        "${order.userName}_${order.time}.jpg";
+
+    return File.fromRawPath(Uint8List.fromList(path.codeUnits));
   }
 }

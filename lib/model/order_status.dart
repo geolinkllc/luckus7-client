@@ -1,3 +1,4 @@
+
 import 'package:com.cushion.lucs/network/api_client.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,12 @@ class OrderStatus {
     map["isComplete"] = isComplete;
     return map;
   }
+
+  // late File? backupFile = (){
+  //   if( !isComplete) {
+  //     return null;
+  //   }
+  // }();
 
   updateOrder(Order order) {
     mega.updateOrder(order);
@@ -117,7 +124,7 @@ class GameOrderStatus {
 class Order {
   int time;
   String orderName;
-  int orderType;
+  OrderType orderType;
   String userName;
   List<OrderNumber> orderNumbers = [];
 

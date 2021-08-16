@@ -40,8 +40,6 @@ class TicketService extends GetxController {
 
   final extraOrderUserIdController = TextEditingController();
 
-  final pathDelim = Platform.isWindows ? "\\" : "/";
-
   @override
   void onInit() {
     scanFolder.value = pref.getString("incomingFolder") ?? "";
@@ -184,33 +182,13 @@ class TicketService extends GetxController {
         tickets.value = tickets.value
           ..removeWhere((element) => element.filePath == t.filePath);
 
-        final file = File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
-        final dirString = driveFolder.value +
-            pathDelim +
-            DateTime.now().format("yyyy-MM-dd") +
-            pathDelim +
-            posted.orderName! +
-            "_" +
-            orderType.value.engText;
-        final dir =
-            Directory.fromRawPath(Uint8List.fromList(dirString.codeUnits));
-
-        dir.createSync(recursive: true);
-
-        if (driveFolder.value != "") {
-          moveFile(
-              file,
-              dir.path +
-                  pathDelim +
-                  "${posted.userName ?? ""}_${posted.time ?? DateTime.now().millisecondsSinceEpoch}.jpg");
-        } else {
-          file.deleteSync();
-        }
+        posted.filePath = t.filePath;
+        backupMatchedTicket(posted);
       } else {
         modify(posted);
 
-        if( posted.process == TicketProcessReadError || posted.process == TicketProcessReadFailed) {
-
+        if (posted.process == TicketProcessReadError) {
+          copyReadFailedTicket(posted);
         }
       }
     } catch (e) {
@@ -230,6 +208,10 @@ class TicketService extends GetxController {
       await sourceFile.delete();
       return newFile;
     }
+  }
+
+  Future<File> copyFileToDir(File sourceFile, String newPath) async {
+    return sourceFile.copy(newPath);
   }
 
   modify(Ticket t) {
@@ -305,5 +287,47 @@ class TicketService extends GetxController {
         .forEach((file) {
       moveFile(file, dir.path + pathDelim + file.path.lastPathComponent);
     });
+  }
+
+  void copyReadFailedTicket(Ticket t) {
+    if (driveFolder.value == "") {
+      return;
+    }
+
+    final file = File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
+    final dirString = driveFolder.value +
+        pathDelim +
+        DateTime.now().format("yyyy-MM-dd") +
+        pathDelim +
+        "read_failed";
+    final dir = Directory.fromRawPath(Uint8List.fromList(dirString.codeUnits));
+
+    dir.createSync(recursive: true);
+
+    copyFileToDir(file, dirString + pathDelim + file.path.lastPathComponent);
+  }
+
+  void backupMatchedTicket(Ticket t) {
+    final file = File.fromRawPath(Uint8List.fromList(t.filePath.codeUnits));
+    final dirString = driveFolder.value +
+        pathDelim +
+        DateTime.now().format("yyyy-MM-dd") +
+        pathDelim +
+        t.orderName! +
+        "_" +
+        orderType.value.engText;
+    final dir = Directory.fromRawPath(Uint8List.fromList(dirString.codeUnits));
+
+    dir.createSync(recursive: true);
+
+    if (driveFolder.value != "") {
+      moveFile(
+          file,
+          dirString +
+              pathDelim +
+              "${t.userName ?? ""}_${t.time ?? DateTime.now().millisecondsSinceEpoch}.jpg");
+    } else {
+      file.deleteSync();
+    }
   }
 }
